@@ -1,0 +1,1029 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLASSIFIED // Farhan Ahammed Jannat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --acid: #8cff61;
+      --acid-glow: rgba(140, 255, 97, 0.6);
+      --acid-dim: #3d7e29;
+      --blood: #ff1744;
+      --blood-glow: rgba(255, 23, 68, 0.7);
+      --ink: #020403;
+      --panel: #08120a;
+    }
+
+    * { 
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--ink);
+      color: var(--acid);
+      font-family: 'Space Mono', 'Share Tech Mono', monospace;
+      user-select: none;
+      overflow-x: hidden;
+    }
+
+    /* Custom Matrix Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #020503;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--acid-dim);
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--acid);
+    }
+
+    /* CRT Scanlines & Grid Overlay */
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 6px 100%;
+    }
+
+    .matrix-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 50% 50%, rgba(140, 255, 97, 0.05), transparent 70%),
+        linear-gradient(rgba(140, 255, 97, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140, 255, 97, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 35px 35px, 35px 35px;
+    }
+
+    /* Audio Toggle Button */
+    .audio-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 60;
+      background: rgba(8, 18, 10, 0.9);
+      border: 1px solid var(--acid-dim);
+      color: var(--acid);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      transition: all 0.2s ease;
+      font-family: inherit;
+      border-radius: 2px;
+    }
+
+    .audio-toggle:hover {
+      border-color: var(--acid);
+      box-shadow: 0 0 15px var(--acid-glow);
+    }
+
+    /* Screen System */
+    .screen {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .screen.active {
+      display: flex !important;
+      opacity: 1 !important;
+    }
+
+    .screen-container {
+      min-height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem 2rem 1rem;
+    }
+
+    /* Custom Pure CSS Loading Bar */
+    .loader-box {
+      width: 100%;
+      max-width: 26rem;
+      text-align: center;
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader-track {
+      width: 100%;
+      height: 20px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid var(--acid-dim);
+      padding: 2px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
+      margin: 1.2rem 0;
+      border-radius: 2px;
+    }
+
+    .loader-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--acid);
+      box-shadow: 0 0 15px var(--acid-glow);
+      transition: width 0.08s linear;
+    }
+
+    .loader-info {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: rgba(140, 255, 97, 0.8);
+    }
+
+    /* Layout & Cards */
+    .dossier-box {
+      width: 100%;
+      max-width: 48rem;
+      background: rgba(6, 16, 8, 0.95);
+      border: 1px solid rgba(140, 255, 97, 0.4);
+      padding: 1.5rem;
+      border-radius: 2px;
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.95);
+      margin: auto 0;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .cyber-card {
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(140, 255, 97, 0.3);
+      padding: 1rem;
+      border-radius: 2px;
+    }
+
+    .cyber-badge {
+      font-size: 10px;
+      background: #031407;
+      border: 1px solid rgba(140, 255, 97, 0.4);
+      color: var(--acid);
+      padding: 2px 6px;
+      display: inline-block;
+    }
+
+    /* Buttons */
+    .cyber-btn {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--acid-dim);
+      color: var(--acid);
+      padding: 0.75rem 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      font-family: inherit;
+      width: 100%;
+      text-align: center;
+    }
+
+    .cyber-btn:hover {
+      border-color: var(--acid);
+      box-shadow: 0 0 20px var(--acid-glow), inset 0 0 10px rgba(140, 255, 97, 0.2);
+      transform: translateY(-2px);
+      color: #fff;
+    }
+
+    .cyber-btn.danger {
+      border-color: rgba(255, 23, 68, 0.6);
+      color: #ff5252;
+    }
+
+    .cyber-btn.danger:hover {
+      border-color: var(--blood);
+      box-shadow: 0 0 25px var(--blood-glow), inset 0 0 12px rgba(255, 23, 68, 0.3);
+      color: #ff80ab;
+    }
+
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    @media (min-width: 520px) {
+      .btn-group {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* Text Effects */
+    .glow-text {
+      text-shadow: 0 0 10px var(--acid-glow), 0 0 20px rgba(140, 255, 97, 0.4);
+    }
+
+    .horror-glow {
+      text-shadow: 0 0 12px var(--blood-glow), 0 0 25px rgba(255, 23, 68, 0.8);
+    }
+
+    .cursor-blink::after {
+      content: '▋';
+      margin-left: 2px;
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Glitch Animation */
+    .glitch-active {
+      animation: violent-glitch 0.15s infinite steps(2);
+      background: #eaffdf !important;
+      filter: invert(1);
+    }
+
+    @keyframes violent-glitch {
+      0% { transform: translate(0) skew(0deg); filter: hue-rotate(0deg); }
+      20% { transform: translate(-8px, 5px) skew(10deg); filter: hue-rotate(90deg); }
+      40% { transform: translate(8px, -5px) skew(-10deg); filter: invert(0.8); }
+      60% { transform: translate(-5px, -8px) skew(5deg); }
+      80% { transform: translate(6px, 6px) skew(-5deg); filter: hue-rotate(180deg); }
+      100% { transform: translate(0) skew(0deg); }
+    }
+
+    /* STRICTLY CENTERED PORTRAIT CIRCLE */
+    .portrait-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .portrait-box {
+      position: relative;
+      width: clamp(140px, 25vw, 190px);
+      height: clamp(140px, 25vw, 190px);
+      border-radius: 50%;
+      border: 2px solid var(--acid);
+      box-shadow: 0 0 30px var(--acid-glow), inset 0 0 20px rgba(140, 255, 97, 0.3);
+      overflow: hidden;
+      background: #051107;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.6s ease;
+      flex-shrink: 0;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .portrait-box.revealed {
+      border-color: var(--acid);
+      box-shadow: 0 0 45px var(--acid-glow);
+    }
+
+    .portrait-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+      opacity: 0;
+      display: none;
+      transition: opacity 0.8s ease;
+    }
+
+    .hooded-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, #0e2412 0%, #030804 100%);
+      z-index: 2;
+    }
+
+    /* Blackout Screen */
+    #blackout-screen {
+      background: #000;
+      z-index: 999;
+      cursor: none;
+    }
+
+    .tab-btn {
+      background: rgba(8, 18, 10, 0.8);
+      border: 1px solid var(--acid-dim);
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: rgba(140, 255, 97, 0.7);
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .tab-btn.active-tab {
+      background: var(--acid);
+      color: #000;
+      font-weight: bold;
+      box-shadow: 0 0 15px var(--acid-glow);
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(140, 255, 97, 0.2);
+      padding-bottom: 0.5rem;
+      overflow-x: auto;
+    }
+
+    /* Typography Helpers */
+    .subline-text {
+      font-size: 0.8rem;
+      color: rgba(140, 255, 97, 0.8);
+      font-style: italic;
+      max-width: 28rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+      text-align: center;
+      transition: opacity 0.7s ease;
+      opacity: 0;
+    }
+
+    .field-label {
+      font-size: 0.7rem;
+      color: var(--acid-dim);
+      display: block;
+      font-weight: bold;
+      margin-top: 0.4rem;
+    }
+
+    .field-val {
+      color: rgba(234, 255, 223, 0.95);
+    }
+  </style>
+</head>
+<body onclick="startAudioEngine()">
+
+  <!-- Screen Scanline & Grid Overlays -->
+  <div class="crt-overlay"></div>
+  <div class="matrix-bg"></div>
+
+  <!-- Audio Control Button -->
+  <button id="bgm-toggle-btn" class="audio-toggle" onclick="toggleBGM(event)">
+    🔊 PIANO BGM: ON
+  </button>
+
+  <!-- Main App Shell -->
+  <main style="position: relative; width: 100%; height: 100%;">
+
+    <!-- 0. INTRO / LOADING SCREEN -->
+    <section id="screen-loading" class="screen active">
+      <div class="screen-container">
+        <div class="loader-box">
+          <div style="font-size: 0.75rem; letter-spacing: 0.1em; color: var(--acid-dim); margin-bottom: 0.5rem;">[ TRANSMISSION DETECTED ]</div>
+          <h1 class="glow-text" style="font-size: 1.4rem; font-weight: bold; text-transform: uppercase;">Accessing Classified Records</h1>
+          
+          <div class="loader-track">
+            <div id="loader-bar" class="loader-fill"></div>
+          </div>
+
+          <div class="loader-info">
+            <span id="loader-status">DECRYPTING PACKETS...</span>
+            <span id="loader-percent">0%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRANSITION GLITCH OVERLAY -->
+    <div id="glitch-flash" class="glitch-active" style="position: fixed; inset: 0; z-index: 40; display: none; pointer-events: none;"></div>
+
+    <!-- 1. QUESTION 1 SCREEN (SUSPENSE 1) -->
+    <section id="screen-q1" class="screen">
+      <div class="screen-container">
+        <div class="loader-box">
+          
+          <!-- Perfectly Centered Portrait Circle -->
+          <div class="portrait-wrapper">
+            <div class="portrait-box">
+              <div class="hooded-placeholder">
+                <svg style="width: 4rem; height: 4rem; color: rgba(140,255,97,0.6);" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2A9 9 0 0 0 3 11c0 4.1 2.7 7.5 6.5 8.6v.9H8v2h8v-2h-1.5v-.9c3.8-1.1 6.5-4.5 6.5-8.6A9 9 0 0 0 12 2zm0 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 13a7 7 0 0 1-5.7-2.9c.1-1.9 3.8-2.9 5.7-2.9s5.6 1 5.7 2.9A7 7 0 0 1 12 19z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.75rem; color: var(--acid-dim); letter-spacing: 0.1em; margin-bottom: 0.5rem;">[ UNIDENTIFIED SUBJECT ]</div>
+          <h2 class="glow-text" style="font-size: 1.3rem; font-weight: bold; margin-bottom: 2rem;">Do you know, Who I am ?!</h2>
+
+          <div class="btn-group">
+            <button onclick="answerQ1('who')" class="cyber-btn">1. Who? 🤨</button>
+            <button onclick="answerQ1('idc')" class="cyber-btn danger">2. IDC 🙄</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. QUESTION 1 RESPONSE SCREEN -->
+    <section id="screen-q1-response" class="screen">
+      <div class="screen-container">
+        <div class="loader-box">
+          <div style="font-size: 0.75rem; color: var(--acid-dim); letter-spacing: 0.1em; margin-bottom: 1rem;">[ SYSTEM FEEDBACK ]</div>
+          
+          <div id="q1-msg-who" class="glow-text" style="font-size: 1.1rem; color: #eaffdf; margin-bottom: 2rem; line-height: 1.6;">
+            "Good. Curiosity is the key... but once opened, the file cannot be unlearned."
+          </div>
+
+          <button onclick="goToScreen('screen-typing')" class="cyber-btn">
+            ► PROCEED TO IDENTITY REVEAL
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TYPING & IMAGE MORPH REVEAL SCREEN -->
+    <section id="screen-typing" class="screen">
+      <div class="screen-container">
+        <div class="loader-box" style="padding: 1rem 0;">
+          
+          <!-- Perfectly Centered Portrait Circle -->
+          <div class="portrait-wrapper">
+            <div id="target-portrait-box" class="portrait-box">
+              <div id="mystery-icon" class="hooded-placeholder">
+                <svg style="width: 3.5rem; height: 3.5rem; color: rgba(140,255,97,0.5);" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                </svg>
+              </div>
+              <img id="real-portrait" class="portrait-img" src="1000054264.png" alt="Farhan Ahammed Jannat">
+            </div>
+          </div>
+
+          <div style="font-size: 0.75rem; color: var(--acid-dim); letter-spacing: 0.1em; margin-bottom: 0.5rem;">[ IDENTITY DECRYPTED ]</div>
+          
+          <!-- Typing Target -->
+          <div style="min-height: 3.5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
+            <h2 id="typed-name" class="glow-text cursor-blink" style="font-size: 1.8rem; font-weight: bold; color: #a3ff80; letter-spacing: 0.05em;"></h2>
+          </div>
+
+          <!-- Sub-caption Line -->
+          <p id="typed-subline" class="subline-text">
+            "a selfish, introvert, angry, ugly, loser, dreaming boy is living in his fantasy world"
+          </p>
+
+          <!-- Next Button -->
+          <button id="btn-to-dossier" onclick="goToScreen('screen-dossier')" class="cyber-btn" style="display: none; max-width: 18rem;">
+            OPEN CLASSIFIED DOSSIER ►
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. MAIN DOSSIER / DATA SECTORS SCREEN -->
+    <section id="screen-dossier" class="screen">
+      <div class="screen-container">
+        <div class="dossier-box">
+          
+          <!-- Header -->
+          <div style="border-bottom: 1px solid rgba(140,255,97,0.3); padding-bottom: 1rem; margin-bottom: 1.2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <span style="font-size: 0.7rem; color: var(--acid-dim); letter-spacing: 0.1em; display: block;">SUBJECT FILE // #009412</span>
+                <h3 class="glow-text" style="font-size: 1.25rem; font-weight: bold;">FARHAN AHAMMED JANNAT</h3>
+              </div>
+              <span class="cyber-badge">STATUS: VERIFIED</span>
+            </div>
+            <p style="font-size: 0.75rem; color: rgba(140,255,97,0.7); font-style: italic; margin-top: 0.4rem;">
+              "a selfish, introvert, angry, ugly, loser, dreaming boy is living in his fantasy world"
+            </p>
+          </div>
+
+          <!-- Tab Bar -->
+          <div class="tab-bar">
+            <button id="tab-family-btn" onclick="switchTab('family')" class="tab-btn active-tab">1. PERSONAL & FAMILY</button>
+            <button id="tab-skills-btn" onclick="switchTab('skills')" class="tab-btn">2. SECTOR SKILLS</button>
+            <button id="tab-dream-btn" onclick="switchTab('dream')" class="tab-btn">3. THE DREAM</button>
+          </div>
+
+          <!-- Tab 1: Personal Details & Family Records -->
+          <div id="tab-family" class="tab-content" style="font-size: 0.85rem; line-height: 1.6;">
+            <div class="cards-grid">
+              
+              <!-- Personal Card -->
+              <div class="cyber-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(140,255,97,0.2); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+                  <strong style="color: #a3ff80;">👤 PERSONAL DETAILS</strong>
+                  <span class="cyber-badge">ID: FAJ-94</span>
+                </div>
+                <div>
+                  <span class="field-label">FULL NAME:</span>
+                  <span class="field-val" style="font-weight: bold;">Farhan Ahammed Jannat</span>
+
+                  <span class="field-label">DATE OF BIRTH:</span>
+                  <span class="field-val">17 Oct 2008</span>
+
+                  <span class="field-label">HEIGHT:</span>
+                  <span class="field-val">5'10"</span>
+
+                  <span class="field-label">PRIMARY ROLE:</span>
+                  <span class="field-val">Video Editor & Graphic Designer</span>
+
+                  <span class="field-label">HOMETOWN:</span>
+                  <span class="field-val">Bizulia, Shailakupa, Jhenaidah</span>
+
+                  <span class="field-label">SECURITY CLEARANCE:</span>
+                  <span class="field-val" style="color: var(--acid);">Level 4 Classified</span>
+                </div>
+              </div>
+
+              <!-- Family Card -->
+              <div class="cyber-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(140,255,97,0.2); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+                  <strong style="color: #a3ff80;">🏠 FAMILY RECORDS</strong>
+                  <span class="cyber-badge">RELATIONSHIPS</span>
+                </div>
+                <div>
+                  <span class="field-label">LINEAGE:</span>
+                  <span class="field-val">Elder son of the family</span>
+
+                  <span class="field-label">FATHER:</span>
+                  <span class="field-val" style="font-weight: bold;">Md Shahinur Rahman <span style="font-size: 0.75rem; color: var(--acid-dim);">(Army)</span></span>
+
+                  <span class="field-label">MOTHER:</span>
+                  <span class="field-val" style="font-weight: bold;">Mrs Fatematus Jhohora <span style="font-size: 0.75rem; color: var(--acid-dim);">(Housewife)</span></span>
+
+                  <span class="field-label">SIBLINGS:</span>
+                  <span class="field-val">2 little sisters</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Tab 2: Sector Skills -->
+          <div id="tab-skills" class="tab-content" style="display: none;">
+            <div class="cyber-card" style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <strong style="color: #a3ff80;">🎬 VIDEO EDITING</strong>
+                <span class="cyber-badge">2 YEARS EXP</span>
+              </div>
+              <p style="font-size: 0.8rem; margin-bottom: 0.4rem;">
+                <strong style="color: var(--acid-dim);">Software:</strong> <b>Adobe Premiere Pro</b>, CapCut, Filmora.
+              </p>
+              <p style="font-size: 0.75rem; color: rgba(140,255,97,0.85);">
+                ⚡ Completed <b>20+ live projects</b> with precise timeline pacing, visual FX, and audio engineering.
+              </p>
+            </div>
+
+            <div class="cyber-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <strong style="color: #a3ff80;">🎨 GRAPHICS DESIGN</strong>
+                <span class="cyber-badge">1 YEAR EXP</span>
+              </div>
+              <p style="font-size: 0.8rem; margin-bottom: 0.4rem;">
+                <strong style="color: var(--acid-dim);">Software:</strong> <b>Adobe Photoshop</b>, Canva.
+              </p>
+              <p style="font-size: 0.75rem; color: rgba(140,255,97,0.85);">
+                ⚡ 1 year experience active in maintaining complete YouTube channel brand identities, thumbnails, and visual assets.
+              </p>
+            </div>
+          </div>
+
+          <!-- Tab 3: Dream -->
+          <div id="tab-dream" class="tab-content" style="display: none; font-size: 0.85rem; line-height: 1.6;">
+            <div style="font-style: italic; color: #a3ff80; border-left: 2px solid var(--acid); padding-left: 1rem; padding-top: 0.5rem; padding-bottom: 0.5rem; background: rgba(8,30,12,0.4); margin-bottom: 1rem;">
+              "Behind the screen, beneath the cuts, renders, and endless streams of data... I seek absolute peace. A quiet sanctuary away from the noise of the world, where focus meets serenity."
+            </div>
+            <p style="font-size: 0.75rem; color: rgba(140,255,97,0.8);">
+              Building a legacy brick by brick—mastering creative media while striving for inner calm in a turbulent digital age.
+            </p>
+          </div>
+
+          <!-- Bottom Exit Override -->
+          <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(140,255,97,0.2); display: flex; justify-content: flex-end;">
+            <button onclick="goToScreen('screen-suspense2')" class="cyber-btn danger" style="max-width: 22rem; font-size: 0.75rem;">
+              ⚠️ TERMINATE TRANSMISSION & OVERRIDE
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SUSPENSE 2 / FINAL CLIFFHANGER -->
+    <section id="screen-suspense2" class="screen">
+      <div class="screen-container">
+        <div class="loader-box" style="background: rgba(0,0,0,0.9); padding: 1.5rem; border: 1px solid rgba(255,23,68,0.5); box-shadow: 0 0 50px rgba(255,23,68,0.3);">
+          <div style="font-size: 0.7rem; color: #ff5252; letter-spacing: 0.1em; margin-bottom: 0.75rem;">⚠️ ANOMALY IN THE PROTOCOL</div>
+          
+          <h3 class="horror-glow" style="font-size: 1.25rem; font-weight: bold; color: #ff1744; text-transform: uppercase; margin-bottom: 1rem;">
+            Final Security Prompt
+          </h3>
+
+          <p style="font-size: 0.85rem; color: #ffcdd2; margin-bottom: 1.5rem; line-height: 1.6;">
+            You have read the file. You know the name: <b style="color: #fff;">Farhan Ahammed Jannat</b>. <br><br>
+            <span style="font-style: italic; font-size: 0.75rem; color: #ff80ab;">"Did you really believe you were inspecting the system... or was the system measuring you?"</span>
+          </p>
+
+          <button onclick="triggerFatalGlitch()" class="cyber-btn danger" style="padding: 1rem; font-size: 0.85rem;">
+            [ CLOSE DOSSIER & EXIT ]
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. COMPLETE BLACKOUT / DEVICE SHUTOFF -->
+    <section id="blackout-screen" class="screen" onclick="attemptReboot()">
+      <div class="screen-container">
+        <div id="reboot-msg" style="display: none; text-align: center; margin: auto 0;">
+          <p style="font-size: 0.8rem; color: #ff1744; letter-spacing: 0.1em; font-family: monospace;">
+            [ SYSTEM CRASH DETECTED // SIGNAL TERMINATED ]
+          </p>
+          <p style="font-size: 0.7rem; color: rgba(140,255,97,0.5); margin-top: 1rem;">
+            Click anywhere to reboot connection...
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Web Audio Synthesizer
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let bgmMasterGain = null;
+    let isBgmPlaying = false;
+    let bgmMuted = false;
+    let pianoLoopTimer = null;
+
+    function startAudioEngine() {
+      if (!audioCtx) {
+        audioCtx = new AudioContext();
+        initCalmPianoBGM();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playPianoNote(freq, duration = 2.5, velocity = 0.25) {
+      if (!audioCtx || audioCtx.state !== 'running' || bgmMuted) return;
+
+      try {
+        const now = audioCtx.currentTime;
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        const filterNode = audioCtx.createBiquadFilter();
+
+        osc1.type = 'sine';
+        osc2.type = 'triangle';
+        osc1.frequency.setValueAtTime(freq, now);
+        osc2.frequency.setValueAtTime(freq * 2, now);
+
+        filterNode.type = 'lowpass';
+        filterNode.frequency.setValueAtTime(1200, now);
+        filterNode.frequency.exponentialRampToValueAtTime(300, now + duration);
+
+        gainNode.gain.setValueAtTime(0.0001, now);
+        gainNode.gain.linearRampToValueAtTime(velocity * 0.12, now + 0.015);
+        gainNode.gain.exponentialRampToValueAtTime(0.00001, now + duration);
+
+        osc1.connect(filterNode);
+        osc2.connect(filterNode);
+        filterNode.connect(gainNode);
+        gainNode.connect(bgmMasterGain || audioCtx.destination);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + duration);
+        osc2.stop(now + duration);
+      } catch (e) {}
+    }
+
+    function initCalmPianoBGM() {
+      if (isBgmPlaying) return;
+      isBgmPlaying = true;
+
+      bgmMasterGain = audioCtx.createGain();
+      bgmMasterGain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+      bgmMasterGain.connect(audioCtx.destination);
+
+      const N = {
+        A3: 220.00, C4: 261.63, E4: 329.63, G4: 392.00,
+        A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33,
+        E5: 659.25, F5: 698.46, G5: 783.99
+      };
+
+      const sequence = [
+        { note: N.A3, delay: 0 }, { note: N.E4, delay: 400 }, { note: N.A4, delay: 800 }, { note: N.C5, delay: 1200 }, { note: N.E5, delay: 1800 },
+        { note: N.C4, delay: 2800 }, { note: N.F5, delay: 3200 }, { note: N.A4, delay: 3600 }, { note: N.C5, delay: 4000 },
+        { note: N.C4, delay: 5400 }, { note: N.G4, delay: 5800 }, { note: N.C5, delay: 6200 }, { note: N.E5, delay: 6600 }, { note: N.G5, delay: 7200 },
+        { note: N.E4, delay: 8200 }, { note: N.G4, delay: 8600 }, { note: N.B4, delay: 9000 }, { note: N.E5, delay: 9400 }
+      ];
+
+      function runLoop() {
+        sequence.forEach(item => {
+          setTimeout(() => {
+            if (!bgmMuted) playPianoNote(item.note, 3.0, 0.22);
+          }, item.delay);
+        });
+      }
+
+      runLoop();
+      pianoLoopTimer = setInterval(runLoop, 11000);
+    }
+
+    function toggleBGM(e) {
+      if (e) e.stopPropagation();
+      startAudioEngine();
+      const btn = document.getElementById('bgm-toggle-btn');
+      bgmMuted = !bgmMuted;
+      btn.innerText = bgmMuted ? "🔇 PIANO BGM: OFF" : "🔊 PIANO BGM: ON";
+      playClickSFX();
+    }
+
+    function playClickSFX() {
+      try {
+        startAudioEngine();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.04);
+        gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function playTypeKeySFX() {
+      try {
+        startAudioEngine();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400 + Math.random() * 300, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.03);
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.03);
+      } catch (e) {}
+    }
+
+    function playStaticGlitch() {
+      try {
+        startAudioEngine();
+        const bufferSize = audioCtx.sampleRate * 0.15;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        const whiteNoise = audioCtx.createBufferSource();
+        whiteNoise.buffer = buffer;
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        whiteNoise.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        whiteNoise.start();
+      } catch (e) {}
+    }
+
+    // Dynamic Screen Switching
+    function goToScreen(screenId) {
+      playClickSFX();
+      playStaticGlitch();
+      const flash = document.getElementById('glitch-flash');
+      flash.style.display = 'block';
+
+      setTimeout(() => {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const targetScreen = document.getElementById(screenId);
+        targetScreen.classList.add('active');
+        targetScreen.scrollTop = 0;
+        flash.style.display = 'none';
+
+        if (screenId === 'screen-typing') {
+          startTypingSequence();
+        }
+      }, 250);
+    }
+
+    // Loader Simulation
+    window.addEventListener('DOMContentLoaded', () => {
+      let progress = 0;
+      const fill = document.getElementById('loader-bar');
+      const percent = document.getElementById('loader-percent');
+      const status = document.getElementById('loader-status');
+
+      const statuses = [
+        "DECRYPTING PACKETS...",
+        "BYPASSING FIREWALL...",
+        "LOCATING SUBJECT DATA...",
+        "ESTABLISHING SECURE NODE..."
+      ];
+
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 8) + 3;
+        if (progress > 100) progress = 100;
+        fill.style.width = `${progress}%`;
+        percent.innerText = `${progress}%`;
+        
+        if (progress < 30) status.innerText = statuses[0];
+        else if (progress < 60) status.innerText = statuses[1];
+        else if (progress < 90) status.innerText = statuses[2];
+        else status.innerText = statuses[3];
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => { goToScreen('screen-q1'); }, 400);
+        }
+      }, 80);
+    });
+
+    function answerQ1(choice) {
+      playClickSFX();
+      if (choice === 'who') {
+        goToScreen('screen-q1-response');
+      } else {
+        triggerFatalGlitch();
+      }
+    }
+
+    // Typing Sequence
+    let typingStarted = false;
+    function startTypingSequence() {
+      if (typingStarted) return;
+      typingStarted = true;
+
+      const targetEl = document.getElementById('typed-name');
+      const subline = document.getElementById('typed-subline');
+      targetEl.innerText = "";
+
+      const steps = [
+        { action: 'type', text: 'Jann' },
+        { action: 'wait', time: 400 },
+        { action: 'erase', count: 4 },
+        { action: 'wait', time: 300 },
+        { action: 'type', text: 'AJ' },
+        { action: 'wait', time: 400 },
+        { action: 'erase', count: 2 },
+        { action: 'wait', time: 400 },
+        { action: 'type', text: 'Farhan Ahammed Jannat' }
+      ];
+
+      let stepIdx = 0;
+
+      function processStep() {
+        if (stepIdx >= steps.length) {
+          subline.style.opacity = '1';
+          revealImage();
+          return;
+        }
+
+        const current = steps[stepIdx];
+
+        if (current.action === 'type') {
+          let charIdx = 0;
+          const typeInterval = setInterval(() => {
+            targetEl.innerText += current.text[charIdx];
+            playTypeKeySFX();
+            charIdx++;
+            if (charIdx >= current.text.length) {
+              clearInterval(typeInterval);
+              stepIdx++;
+              setTimeout(processStep, 200);
+            }
+          }, 110);
+        } else if (current.action === 'erase') {
+          let erased = 0;
+          const eraseInterval = setInterval(() => {
+            targetEl.innerText = targetEl.innerText.slice(0, -1);
+            playTypeKeySFX();
+            erased++;
+            if (erased >= current.count) {
+              clearInterval(eraseInterval);
+              stepIdx++;
+              setTimeout(processStep, 200);
+            }
+          }, 90);
+        } else if (current.action === 'wait') {
+          stepIdx++;
+          setTimeout(processStep, current.time);
+        }
+      }
+
+      processStep();
+    }
+
+    // Reveal Photo Logic
+    function revealImage() {
+      playStaticGlitch();
+      const realImg = document.getElementById('real-portrait');
+      const mysteryIcon = document.getElementById('mystery-icon');
+      const portraitBox = document.getElementById('target-portrait-box');
+      const btn = document.getElementById('btn-to-dossier');
+
+      portraitBox.classList.add('glitch-active');
+
+      setTimeout(() => {
+        portraitBox.classList.remove('glitch-active');
+        mysteryIcon.style.opacity = '0';
+        mysteryIcon.style.display = 'none';
+
+        realImg.style.display = 'block';
+        realImg.style.opacity = '1';
+        portraitBox.classList.add('revealed');
+
+        btn.style.display = 'block';
+      }, 600);
+    }
+
+    // Tab Switcher
+    function switchTab(tabKey) {
+      playClickSFX();
+      const tabs = ['family', 'skills', 'dream'];
+      tabs.forEach(t => {
+        document.getElementById(`tab-${t}`).style.display = 'none';
+        document.getElementById(`tab-${t}-btn`).classList.remove('active-tab');
+      });
+      document.getElementById(`tab-${tabKey}`).style.display = 'block';
+      document.getElementById(`tab-${tabKey}-btn`).classList.add('active-tab');
+    }
+
+    // Fatal Glitch Shutdown
+    function triggerFatalGlitch() {
+      playClickSFX();
+      playStaticGlitch();
+      const flash = document.getElementById('glitch-flash');
+      flash.style.display = 'block';
+
+      setTimeout(() => {
+        flash.style.display = 'none';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const blackout = document.getElementById('blackout-screen');
+        blackout.classList.add('active');
+
+        setTimeout(() => {
+          document.getElementById('reboot-msg').style.display = 'block';
+        }, 3000);
+      }, 850);
+    }
+
+    function attemptReboot() {
+      const msg = document.getElementById('reboot-msg');
+      if (msg.style.display === 'block') {
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
+```
