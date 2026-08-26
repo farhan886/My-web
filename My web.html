@@ -1,0 +1,870 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Who Am I?</title>  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">  <style>  
+  
+*{  
+margin:0;  
+padding:0;  
+box-sizing:border-box;  
+}  
+  
+body{  
+background:#000;  
+overflow:hidden;  
+font-family:'Share Tech Mono', monospace;  
+display:flex;  
+justify-content:center;  
+align-items:center;  
+height:100vh;  
+color:#00ff66;  
+}  
+  
+.container{  
+width:90%;  
+max-width:700px;  
+text-align:center;  
+}  
+  
+.title{  
+font-size:28px;  
+letter-spacing:4px;  
+text-transform:uppercase;  
+text-shadow:  
+0 0 5px #00ff66,  
+0 0 15px #00ff66,  
+0 0 30px #00ff66;  
+margin-bottom:35px;  
+}  
+  
+.cursor{  
+animation:blink .8s infinite;  
+}  
+  
+@keyframes blink{  
+50%{opacity:0;}  
+}  
+  
+.loading-bar{  
+width:100%;  
+height:14px;  
+border:2px solid #00ff66;  
+overflow:hidden;  
+box-shadow:  
+0 0 10px #00ff66,  
+0 0 25px #00ff66;  
+}  
+  
+.progress{  
+height:100%;  
+width:0%;  
+background:#00ff66;  
+box-shadow:  
+0 0 10px #00ff66,  
+0 0 25px #00ff66,  
+0 0 50px #00ff66;  
+}  
+  
+.percent{  
+margin-top:25px;  
+font-size:52px;  
+font-family:'Share Tech Mono',monospace;  
+letter-spacing:0;  
+font-weight:700;  
+color:#00ff66;  
+text-shadow:  
+0 0 8px #00ff66,  
+0 0 20px #00ff66;  
+}  
+  
+.status{  
+margin-top:18px;  
+font-size:18px;  
+opacity:.8;  
+letter-spacing:2px;  
+}  
+  
+#scene2{
+position:fixed;
+inset:0;
+background:#000;
+display:none;
+overflow:hidden;
+justify-content:center;
+align-items:flex-start;
+background:
+radial-gradient(circle at center,
+#050505 0%,
+#000 70%);
+}
+
+.eyes{
+position:absolute;
+width:100%;
+height:100%;
+object-fit: center;
+opacity:90;
+animation:eyesFade 2s forwards;
+animation-delay:1.5s;
+filter:brightness(.9);
+}
+
+@keyframes eyesFade{
+
+from{
+opacity:0;
+transform:scale(1.08);
+}
+
+to{
+opacity:.45;
+transform:scale(1.00);
+}
+
+}
+
+.portrait img{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    width:100%;
+    height:100%;
+
+    transform:translate(-50%, -50%);
+
+    object-fit:contain;
+    object-position:center center;
+
+    display:block;
+}
+  
+@keyframes portraitReveal{
+
+from{
+
+opacity:0;
+
+transform:translateY(70px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.portrait img{
+    position:absolute;
+
+    width:150%;
+    height:150%;
+
+    max-width:none;
+    max-height:none;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%, -50%);
+
+    object-fit:contain;
+
+    display:block;
+}
+
+@keyframes breathe{
+
+0%{
+transform:scale(1);
+}
+
+50%{
+transform:scale(1.03);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+  
+@keyframes fadeScene{  
+  
+from{  
+opacity:0;  
+}  
+  
+to{  
+opacity:1;  
+}  
+  
+}  
+  
+.eyes{
+
+position:absolute;
+
+width:100%;
+height:100%;
+
+object-fit:cover;
+
+opacity:0;
+
+filter:
+brightness(1.2)
+contrast(1.3);
+
+animation:
+eyesFade 2s forwards,
+blink 12s infinite;
+
+animation-delay:
+1.5s,
+6s;
+
+}
+
+@keyframes ringGlow{
+
+0%{
+box-shadow:
+0 0 15px #00ff66;
+}
+
+50%{
+box-shadow:
+0 0 35px #00ff66,
+0 0 60px rgba(0,255,120,.5);
+}
+
+100%{
+box-shadow:
+0 0 15px #00ff66;
+}
+
+}
+
+@keyframes blink{
+
+0%,95%,100%{
+transform:scaleY(1);
+}
+
+96%{
+transform:scaleY(.03);
+}
+
+98%{
+transform:scaleY(1);
+}
+
+}
+
+@keyframes breathe{
+
+0%{
+transform:scale(1);
+}
+
+50%{
+transform:scale(1.02);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+@keyframes portraitReveal{
+
+from{
+
+opacity:0;
+
+transform:
+translateX(-50%)
+translateY(60px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:
+translateX(-50%)
+translateY(0);
+
+}
+
+}
+  
+@keyframes eyesGlow{  
+  
+from{  
+opacity:.08;  
+}  
+  
+to{  
+opacity:.35;  
+}  
+  
+}  
+  
+.portrait{  
+  
+margin-top:70px;  
+  
+width:220px;  
+height:220px;  
+  
+border:2px solid rgba(0,255,100,.3);  
+  
+border-radius:50%;  
+  
+position:relative;  
+  
+overflow:hidden;  
+  
+box-shadow:0 0 30px rgba(0,255,100,.15);  
+
+z-index:10;
+
+position-area: margin-top;
+
+position: center;
+  
+}  
+  
+.hat{  
+  
+position:absolute;  
+  
+width:170px;  
+height:55px;  
+  
+background:#090909;  
+  
+left:25px;  
+top:35px;  
+  
+border-radius:80px;  
+  
+}  
+  
+.hat::after{  
+  
+content:"";  
+  
+position:absolute;  
+  
+width:110px;  
+height:90px;  
+  
+background:#090909;  
+  
+left:30px;  
+top:-55px;  
+  
+border-radius:12px;  
+  
+}  
+  
+.head{  
+  
+position:absolute;  
+  
+width:95px;  
+height:110px;  
+  
+background:#050505;  
+  
+border-radius:50%;  
+  
+left:63px;  
+top:72px;  
+  
+}  
+  
+.coat{  
+  
+position:absolute;  
+  
+width:160px;  
+height:170px;  
+  
+background:#050505;  
+  
+left:30px;  
+top:125px;  
+  
+clip-path:polygon(50% 0%,100% 100%,0% 100%);  
+  
+}  
+
+#glitch{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+z-index:99999;
+
+pointer-events:none;
+
+background:
+repeating-linear-gradient(
+0deg,
+#ffffff 0px,
+#ffffff 2px,
+#000000 2px,
+#000000 4px
+);
+
+animation:glitch .08s infinite;
+
+}
+
+@keyframes glitch{
+
+0%{
+
+transform:translateX(0);
+
+opacity:.9;
+
+}
+
+25%{
+
+transform:translateX(-15px);
+
+filter:hue-rotate(90deg);
+
+}
+
+50%{
+
+transform:translateX(12px);
+
+filter:invert(1);
+
+}
+
+75%{
+
+transform:translateX(-8px);
+
+}
+
+100%{
+
+transform:translateX(0);
+
+opacity:0;
+
+}
+
+}
+
+  .question-box{
+
+    position:absolute;
+
+    top:58%;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:90%;
+    max-width:700px;
+
+    text-align:center;
+
+    z-index:20;
+
+    opacity:0;
+
+    animation:questionAppear 1.5s ease forwards;
+    animation-delay:5s;
+}
+
+
+.question{
+
+    color:#00ff66;
+
+    font-family:'Share Tech Mono',monospace;
+
+    font-size:clamp(20px,4vw,32px);
+
+    letter-spacing:2px;
+
+    text-shadow:
+        0 0 5px #00ff66,
+        0 0 15px #00ff66,
+        0 0 30px rgba(0,255,102,.7);
+
+    margin-bottom:30px;
+
+}
+
+
+.options{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+}
+
+
+.options button{
+
+    background:transparent;
+
+    color:#00ff66;
+
+    border:1px solid rgba(0,255,102,.7);
+
+    padding:12px 25px;
+
+    font-family:'Share Tech Mono',monospace;
+
+    font-size:17px;
+
+    letter-spacing:1px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+
+.options button:hover{
+
+    background:#00ff66;
+
+    color:#000;
+
+    box-shadow:
+        0 0 10px #00ff66,
+        0 0 30px #00ff66;
+
+    transform:scale(1.05);
+
+}
+
+
+@keyframes questionAppear{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translate(-50%,20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translate(-50%,0);
+
+    }
+
+}
+
+  .response{
+
+    color:#00ff66;
+
+    font-family:'Share Tech Mono',monospace;
+
+    font-size:clamp(20px,4vw,30px);
+
+    letter-spacing:2px;
+
+    text-shadow:
+        0 0 5px #00ff66,
+        0 0 15px #00ff66,
+        0 0 30px #00ff66;
+
+    animation:responseGlitch .8s ease;
+
+}
+
+
+@keyframes responseGlitch{
+
+    0%{
+
+        opacity:0;
+
+        transform:translateX(-10px);
+
+        filter:blur(4px);
+
+    }
+
+    50%{
+
+        opacity:.5;
+
+        transform:translateX(5px);
+
+    }
+
+    100%{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+        filter:blur(0);
+
+    }
+
+}
+
+  .response-btn{
+
+    margin-top:30px;
+
+    padding:12px 35px;
+
+    background:transparent;
+
+    color:#00ff66;
+
+    border:1px solid #00ff66;
+
+    font-family:'Share Tech Mono', monospace;
+
+    font-size:18px;
+
+    letter-spacing:2px;
+
+    cursor:pointer;
+
+    text-shadow:0 0 8px #00ff66;
+
+    box-shadow:
+        0 0 8px rgba(0,255,102,.4);
+
+    transition:.3s;
+
+}
+
+.response-btn:hover{
+
+    background:#00ff66;
+
+    color:#000;
+
+    box-shadow:
+        0 0 15px #00ff66,
+        0 0 35px #00ff66;
+
+    transform:scale(1.05);
+
+}
+  
+</style> 
+</head>  
+<body>
+<div class="container">  <div class="title">  
+MEMORY UPLOADING<span class="cursor">_</span>  
+</div>  <div class="loading-bar">  
+<div class="progress"></div>  
+</div>  <div class="percent">0%</div>  <div class="status">  
+Initializing Memory...  
+</div>  </div>
+  
+  <script>  
+  
+let progress=document.querySelector(".progress");  
+let percent=document.querySelector(".percent");  
+let status=document.querySelector(".status");  
+  
+let value=0;  
+  
+const messages=[  
+"Initializing Memory...",  
+"Decrypting Files...",  
+"Scanning Identity...",  
+"Recovering Lost Memories...",  
+"Analyzing Consciousness...",  
+"Accessing Hidden Archive...",  
+"Verifying Existence...",  
+"Synchronization Complete..."  
+];  
+  
+let interval=setInterval(()=>{  
+  
+value++;  
+  
+progress.style.width=value+"%";  
+percent.innerHTML=value+"%";  
+  
+if(value==15)  
+status.innerHTML=messages[1];  
+  
+if(value==30)  
+status.innerHTML=messages[2];  
+  
+if(value==45)  
+status.innerHTML=messages[3];  
+  
+if(value==60)  
+status.innerHTML=messages[4];  
+  
+if(value==75)  
+status.innerHTML=messages[5];  
+  
+if(value==90)  
+status.innerHTML=messages[6];  
+  
+if(value>=100){
+
+status.innerHTML="Synchronization Complete...";
+
+clearInterval(interval);
+
+setTimeout(()=>{
+
+glitchTransition();
+
+},1200);
+
+}
+  
+},50);  
+
+function glitchTransition(){
+
+let glitch=document.createElement("div");
+
+glitch.id="glitch";
+
+document.body.appendChild(glitch);
+
+setTimeout(()=>{
+
+glitch.remove();
+
+document.querySelector(".container").style.display="none";
+
+document.getElementById("scene2").style.display="flex";
+
+},2000);
+
+}
+
+    function answerWho(){
+
+    const questionBox =
+        document.querySelector(".question-box");
+
+    questionBox.innerHTML = `
+    
+        <div class="response">
+            Ok, let's see if you can find me or not 😄
+        </div>
+
+        <button class="response-btn" onclick="goToMystery()">
+            OKAY!
+        </button>
+
+        function leavePage(){
+
+    document.body.innerHTML = "";
+
+    document.body.style.background = "#000";
+
+}
+
+    `;
+
+}
+
+function answerIDC(){
+
+    const questionBox =
+        document.querySelector(".question-box");
+
+    questionBox.innerHTML = `
+
+        <div class="response">
+            You will 😏
+        </div>
+
+        <div class="response-options">
+
+            <button class="response-btn"
+                    onclick="goToMystery()">
+                1. Move forward
+            </button>
+
+            <button class="response-btn"
+                    onclick="leavePage()">
+                2. No need
+            </button>
+
+        </div>
+
+    `;
+
+}
+  
+</script> 
+  <div id="scene2">
+
+    <img src="eyes.png" class="eyes">
+
+    <div class="portrait">
+        <img src="shadow.png">
+    </div>
+
+    <div class="question-box">
+
+        <div class="question">
+            Do you know, who I am<span class="cursor">_</span>
+        </div>
+
+        <div class="options">
+
+            <button onclick="answerWho()">1. Who?!</button>
+
+            <button onclick="answerIDC()">2. IDC</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+    
+</body>  
+</html>
