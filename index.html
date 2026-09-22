@@ -1,1026 +1,1099 @@
-```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CLASSIFIED // Farhan Ahammed Jannat</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --acid: #8cff61;
-      --acid-glow: rgba(140, 255, 97, 0.6);
-      --acid-dim: #3d7e29;
-      --blood: #ff1744;
-      --blood-glow: rgba(255, 23, 68, 0.7);
-      --ink: #020403;
-      --panel: #08120a;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIPHER // CLASSIFIED INVESTIGATION FILE</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#030504',
+                            card: '#080d0a',
+                            border: '#112217',
+                            green: '#00ff66',
+                            greenDim: '#00aa44',
+                            greenDark: '#052210',
+                            red: '#ff0033',
+                            redDark: '#33000a',
+                            gray: '#8a9990',
+                            text: '#d0dfd5'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                        code: ['"Space Mono"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
 
-    * { 
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <style>
+        /* Custom CSS Rules */
+        :root {
+            --color-green: #00ff66;
+            --color-red: #ff0033;
+        }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: var(--ink);
-      color: var(--acid);
-      font-family: 'Space Mono', 'Share Tech Mono', monospace;
-      user-select: none;
-      overflow-x: hidden;
-    }
+        body {
+            background-color: #030504;
+            color: #d0dfd5;
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            user-select: none;
+        }
 
-    /* Custom Matrix Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #020503;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--acid-dim);
-      border-radius: 2px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--acid);
-    }
+        /* Scanline Overlay Effect */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.35) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+        }
 
-    /* CRT Scanlines & Grid Overlay */
-    .crt-overlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 50;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-      background-size: 100% 3px, 6px 100%;
-    }
+        /* Glitch Animation Classes */
+        .glitch-flash {
+            animation: glitch-anim 0.2s steps(2) infinite;
+        }
 
-    .matrix-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background: 
-        radial-gradient(circle at 50% 50%, rgba(140, 255, 97, 0.05), transparent 70%),
-        linear-gradient(rgba(140, 255, 97, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(140, 255, 97, 0.03) 1px, transparent 1px);
-      background-size: 100% 100%, 35px 35px, 35px 35px;
-    }
+        @keyframes glitch-anim {
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            20% { transform: translate(-3px, 3px); filter: hue-rotate(90deg) invert(0.2); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); filter: hue-rotate(180deg); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); filter: hue-rotate(0deg); }
+        }
 
-    /* Audio Toggle Button */
-    .audio-toggle {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 60;
-      background: rgba(8, 18, 10, 0.9);
-      border: 1px solid var(--acid-dim);
-      color: var(--acid);
-      padding: 0.4rem 0.8rem;
-      font-size: 0.75rem;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      transition: all 0.2s ease;
-      font-family: inherit;
-      border-radius: 2px;
-    }
+        .screen-distortion {
+            animation: distort 0.8s ease-in-out;
+        }
 
-    .audio-toggle:hover {
-      border-color: var(--acid);
-      box-shadow: 0 0 15px var(--acid-glow);
-    }
+        @keyframes distort {
+            0% { transform: scale(1) skew(0deg); }
+            20% { transform: scale(1.02, 0.98) skew(2deg); filter: contrast(150%); }
+            40% { transform: scale(0.99, 1.01) skew(-1deg); }
+            60% { transform: scale(1.01, 0.99) skew(1deg); }
+            100% { transform: scale(1) skew(0deg); }
+        }
 
-    /* Screen System */
-    .screen {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: none;
-      flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      -webkit-overflow-scrolling: touch;
-    }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030504;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ff66;
+            border-radius: 2px;
+        }
 
-    .screen.active {
-      display: flex !important;
-      opacity: 1 !important;
-    }
+        /* CRT Screen Flicker */
+        .crt-flicker {
+            animation: flicker 0.15s infinite alternate;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            100% { opacity: 1; }
+        }
 
-    .screen-container {
-      min-height: 100%;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem 1rem 2rem 1rem;
-    }
+        /* HUD Border styling */
+        .hud-corner {
+            position: relative;
+        }
+        .hud-corner::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid var(--color-green);
+            border-left: 2px solid var(--color-green);
+        }
+        .hud-corner::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            border-bottom: 2px solid var(--color-green);
+            border-right: 2px solid var(--color-green);
+        }
 
-    /* Custom Pure CSS Loading Bar */
-    .loader-box {
-      width: 100%;
-      max-width: 26rem;
-      text-align: center;
-      margin: auto 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+        .hud-corner-red::before { border-color: var(--color-red); }
+        .hud-corner-red::after { border-color: var(--color-red); }
 
-    .loader-track {
-      width: 100%;
-      height: 20px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 1px solid var(--acid-dim);
-      padding: 2px;
-      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
-      margin: 1.2rem 0;
-      border-radius: 2px;
-    }
+        /* Scanning Line */
+        .scanner-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff66, transparent);
+            box-shadow: 0 0 15px #00ff66;
+            animation: scanMove 3s linear infinite;
+        }
+        @keyframes scanMove {
+            0% { top: 0%; opacity: 0; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
 
-    .loader-fill {
-      height: 100%;
-      width: 0%;
-      background-color: var(--acid);
-      box-shadow: 0 0 15px var(--acid-glow);
-      transition: width 0.1s cubic-bezier(0.1, 0.7, 0.1, 1);
-    }
-
-    .loader-info {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: rgba(140, 255, 97, 0.8);
-    }
-
-    /* Layout & Cards */
-    .dossier-box {
-      width: 100%;
-      max-width: 48rem;
-      background: rgba(6, 16, 8, 0.95);
-      border: 1px solid rgba(140, 255, 97, 0.4);
-      padding: 1.5rem;
-      border-radius: 2px;
-      box-shadow: 0 0 35px rgba(0, 0, 0, 0.95);
-      margin: auto 0;
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-
-    @media (min-width: 768px) {
-      .cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    .cyber-card {
-      background: rgba(0, 0, 0, 0.65);
-      border: 1px solid rgba(140, 255, 97, 0.3);
-      padding: 1rem;
-      border-radius: 2px;
-    }
-
-    .cyber-badge {
-      font-size: 10px;
-      background: #031407;
-      border: 1px solid rgba(140, 255, 97, 0.4);
-      color: var(--acid);
-      padding: 2px 6px;
-      display: inline-block;
-    }
-
-    /* Buttons */
-    .cyber-btn {
-      position: relative;
-      background: var(--panel);
-      border: 1px solid var(--acid-dim);
-      color: var(--acid);
-      padding: 0.75rem 1.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      overflow: hidden;
-      font-family: inherit;
-      width: 100%;
-      text-align: center;
-    }
-
-    .cyber-btn:hover {
-      border-color: var(--acid);
-      box-shadow: 0 0 20px var(--acid-glow), inset 0 0 10px rgba(140, 255, 97, 0.2);
-      transform: translateY(-2px);
-      color: #fff;
-    }
-
-    .cyber-btn.danger {
-      border-color: rgba(255, 23, 68, 0.6);
-      color: #ff5252;
-    }
-
-    .cyber-btn.danger:hover {
-      border-color: var(--blood);
-      box-shadow: 0 0 25px var(--blood-glow), inset 0 0 12px rgba(255, 23, 68, 0.3);
-      color: #ff80ab;
-    }
-
-    .btn-group {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-      width: 100%;
-    }
-
-    @media (min-width: 520px) {
-      .btn-group {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    /* Text Effects */
-    .glow-text {
-      text-shadow: 0 0 10px var(--acid-glow), 0 0 20px rgba(140, 255, 97, 0.4);
-    }
-
-    .cursor-blink::after {
-      content: '▋';
-      margin-left: 2px;
-      animation: blink 0.8s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-
-    /* Glitch Effect Overlay */
-    #glitch-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      pointer-events: none;
-      display: none;
-      background: transparent;
-    }
-
-    .glitch-active #glitch-overlay {
-      display: block;
-      animation: glitch-anim 0.25s infinite steps(2);
-    }
-
-    .screen-glitch {
-      animation: screen-shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    }
-
-    @keyframes screen-shake {
-      0% { transform: translate(0, 0) skew(0deg); }
-      15% { transform: translate(-12px, 8px) skew(4deg); filter: invert(0.8) hue-rotate(90deg); }
-      30% { transform: translate(10px, -6px) skew(-6deg); filter: sepia(1) saturate(5); }
-      45% { transform: translate(-8px, -8px) skew(3deg); filter: invert(0.2); }
-      60% { transform: translate(12px, 6px) skew(-2deg); }
-      75% { transform: translate(-4px, 2px) skew(1deg); filter: contrast(200%); }
-      100% { transform: translate(0, 0) skew(0deg); filter: none; }
-    }
-
-    @keyframes glitch-anim {
-      0% {
-        box-shadow: inset 0 0 100px rgba(140, 255, 97, 0.8);
-        background: rgba(140, 255, 97, 0.15);
-      }
-      20% {
-        box-shadow: inset 20px -10px 80px rgba(255, 23, 68, 0.9);
-        background: rgba(255, 23, 68, 0.2);
-        clip-path: inset(10% 0 30% 0);
-      }
-      40% {
-        box-shadow: inset -15px 15px 90px rgba(0, 255, 255, 0.8);
-        background: rgba(0, 255, 255, 0.1);
-        clip-path: inset(40% 0 10% 0);
-      }
-      60% {
-        box-shadow: inset 0 0 120px rgba(255, 255, 255, 0.9);
-        background: rgba(255, 255, 255, 0.25);
-        clip-path: inset(25% 0 50% 0);
-      }
-      80% {
-        box-shadow: inset 10px -20px 50px rgba(140, 255, 97, 0.6);
-        background: rgba(0, 0, 0, 0.8);
-        clip-path: inset(70% 0 5% 0);
-      }
-      100% {
-        box-shadow: none;
-        background: transparent;
-        clip-path: none;
-      }
-    }
-
-    /* STRICTLY CENTERED PORTRAIT CIRCLE */
-    .portrait-wrapper {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .portrait-box {
-      position: relative;
-      width: clamp(140px, 25vw, 190px);
-      height: clamp(140px, 25vw, 190px);
-      border-radius: 50%;
-      border: 2px solid var(--acid);
-      box-shadow: 0 0 30px var(--acid-glow), inset 0 0 20px rgba(140, 255, 97, 0.3);
-      overflow: hidden;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.6s ease;
-      flex-shrink: 0;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .portrait-box.revealed {
-      border-color: var(--acid);
-      box-shadow: 0 0 45px var(--acid-glow);
-    }
-
-    .portrait-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 20%;
-      opacity: 0;
-      display: none;
-      transition: opacity 0.8s ease;
-    }
-
-    .hooded-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-      z-index: 2;
-    }
-
-    .shadow-avatar-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .tab-btn {
-      background: rgba(8, 18, 10, 0.8);
-      border: 1px solid var(--acid-dim);
-      padding: 0.5rem 1rem;
-      font-size: 0.85rem;
-      cursor: pointer;
-      color: rgba(140, 255, 97, 0.7);
-      transition: all 0.2s;
-      white-space: nowrap;
-      font-family: inherit;
-    }
-
-    .tab-btn.active-tab {
-      background: var(--acid);
-      color: #000;
-      font-weight: bold;
-      box-shadow: 0 0 15px var(--acid-glow);
-    }
-
-    .tab-bar {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(140, 255, 97, 0.2);
-      padding-bottom: 0.5rem;
-      overflow-x: auto;
-    }
-
-    /* Typography Helpers */
-    .subline-text {
-      font-size: 0.8rem;
-      color: rgba(140, 255, 97, 0.8);
-      font-style: italic;
-      max-width: 28rem;
-      margin-bottom: 1.5rem;
-      line-height: 1.5;
-      text-align: center;
-      transition: opacity 0.7s ease;
-      opacity: 0;
-    }
-
-    .field-label {
-      font-size: 0.7rem;
-      color: var(--acid-dim);
-      display: block;
-      font-weight: bold;
-      margin-top: 0.4rem;
-    }
-
-    .field-val {
-      color: rgba(234, 255, 223, 0.95);
-    }
-  </style>
+        /* Glow effects */
+        .glow-green {
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+        }
+        .glow-red {
+            text-shadow: 0 0 8px rgba(255, 0, 51, 0.7);
+        }
+        .box-glow-green {
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+        }
+    </style>
 </head>
-<body onclick="startAudioEngine()">
+<body class="min-h-screen bg-cyber-black text-cyber-text relative crt-flicker flex flex-col justify-between overflow-hidden">
 
-  <!-- Screen Scanline & Grid Overlays -->
-  <div class="crt-overlay"></div>
-  <div class="matrix-bg"></div>
-  <div id="glitch-overlay"></div>
+    <!-- Ambient Background Matrix/Grid Canvas -->
+    <canvas id="bgCanvas" class="fixed inset-0 z-0 opacity-20 pointer-events-none"></canvas>
+    
+    <!-- Scanline Filter -->
+    <div class="fixed inset-0 z-40 scanlines opacity-80"></div>
 
-  <!-- Audio Control Button -->
-  <button id="bgm-toggle-btn" class="audio-toggle" onclick="toggleBGM(event)">
-    🔊 PIANO BGM: ON
-  </button>
-
-  <!-- Main App Shell -->
-  <main style="position: relative; width: 100%; height: 100%;">
-
-    <!-- 0. INTRO / LOADING SCREEN -->
-    <section id="screen-loading" class="screen active">
-      <div class="screen-container">
-        <div class="loader-box">
-          <div style="font-size: 0.75rem; letter-spacing: 0.1em; color: var(--acid-dim); margin-bottom: 0.5rem;">[ TRANSMISSION DETECTED ]</div>
-          <h1 class="glow-text" style="font-size: 1.4rem; font-weight: bold; text-transform: uppercase;">Accessing Classified Records</h1>
-          
-          <div class="loader-track">
-            <div id="loader-bar" class="loader-fill"></div>
-          </div>
-
-          <div class="loader-info">
-            <span id="loader-status">DECRYPTING PACKETS...</span>
-            <span id="loader-percent">0%</span>
-          </div>
+    <!-- Red Glitch Overlay Alert Container -->
+    <div id="glitchOverlay" class="fixed inset-0 z-50 bg-cyber-red/20 pointer-events-none hidden flex items-center justify-center border-4 border-cyber-red">
+        <div class="bg-cyber-black/90 p-6 border border-cyber-red text-cyber-red font-mono text-center glow-red">
+            <p class="text-2xl font-bold tracking-widest animate-pulse">[ SYSTEM ANOMALY DETECTED ]</p>
+            <p class="text-xs mt-2 uppercase tracking-widest" id="glitchOverlayText">UNAUTHORIZED IDENTITY EXTRACTION</p>
         </div>
-      </div>
-    </section>
+    </div>
 
-    <!-- 1. QUESTION 1 SCREEN (SUSPENSE 1) -->
-    <section id="screen-q1" class="screen">
-      <div class="screen-container">
-        <div class="loader-box">
-          
-          <!-- Perfectly Centered Portrait Circle with Anonymous Shadow Image -->
-          <div class="portrait-wrapper">
-            <div class="portrait-box">
-              <div class="hooded-placeholder">
-                <img class="shadow-avatar-img" src="shadow.png" alt="Anonymous Hooded Silhouette" onerror="this.onerror=null; this.src='1000054264.png';">
-              </div>
-            </div>
-          </div>
-
-          <div style="font-size: 0.75rem; color: var(--acid-dim); letter-spacing: 0.1em; margin-bottom: 0.5rem;">[ UNIDENTIFIED SUBJECT ]</div>
-          <h2 class="glow-text" style="font-size: 1.3rem; font-weight: bold; margin-bottom: 2rem;">Do you know, Who I am ?!</h2>
-
-          <div class="btn-group">
-            <button onclick="answerQ1('who')" class="cyber-btn">1. Who? 🤨</button>
-            <button onclick="answerQ1('idc')" class="cyber-btn danger">2. IDC 🙄</button>
-          </div>
+    <!-- HUD Header Overlay -->
+    <header class="fixed top-0 left-0 right-0 z-30 p-4 md:p-6 flex justify-between items-center text-xs tracking-widest border-b border-cyber-green/10 bg-cyber-black/80 backdrop-blur-sm">
+        <div class="flex items-center space-x-3">
+            <span class="inline-block w-2 h-2 rounded-full bg-cyber-green animate-ping"></span>
+            <span class="font-mono text-cyber-green font-bold glow-green">CIPHER // CLASSIFIED</span>
+            <span class="hidden md:inline-block text-cyber-gray opacity-60">| NODE_07</span>
         </div>
-      </div>
-    </section>
 
-    <!-- 2. QUESTION 1 RESPONSE SCREEN -->
-    <section id="screen-q1-response" class="screen">
-      <div class="screen-container">
-        <div class="loader-box">
-          <div style="font-size: 0.75rem; color: var(--acid-dim); letter-spacing: 0.1em; margin-bottom: 1rem;">[ SYSTEM FEEDBACK ]</div>
-          
-          <div id="q1-msg-who" class="glow-text" style="font-size: 1.1rem; color: #eaffdf; margin-bottom: 2rem; line-height: 1.6;">
-            "Good. Curiosity is the key... but once opened, the file cannot be unlearned."
-          </div>
+        <div class="flex items-center space-x-4">
+            <!-- Audio Toggle Button -->
+            <button id="audioToggleBtn" onclick="toggleAudio()" class="px-2 py-1 border border-cyber-green/30 text-cyber-green text-[10px] hover:bg-cyber-green/10 transition-colors flex items-center space-x-1">
+                <span id="audioIcon">🔊</span>
+                <span id="audioStatus">AUDIO: ON</span>
+            </button>
 
-          <button onclick="goToScreen('screen-typing')" class="cyber-btn">
-            ► PROCEED TO IDENTITY REVEAL
-          </button>
+            <!-- Navigation Drawer Toggle Button -->
+            <button id="navMenuBtn" onclick="toggleNavMenu()" class="px-3 py-1 border border-cyber-green/40 text-cyber-green hover:bg-cyber-green/20 transition-all font-mono">
+                [ INDEX ]
+            </button>
+
+            <span class="hidden sm:inline-block text-cyber-green/80 font-mono" id="hudClock">00:00:00</span>
         </div>
-      </div>
-    </section>
+    </header>
 
-    <!-- 3. TYPING & IMAGE MORPH REVEAL SCREEN -->
-    <section id="screen-typing" class="screen">
-      <div class="screen-container">
-        <div class="loader-box" style="padding: 1rem 0;">
-          
-          <!-- Perfectly Centered Portrait Circle -->
-          <div class="portrait-wrapper">
-            <div id="target-portrait-box" class="portrait-box">
-              <div id="mystery-icon" class="hooded-placeholder">
-                <img class="shadow-avatar-img" src="shadow.png" alt="Anonymous Shadow">
-              </div>
-              <img id="real-portrait" class="portrait-img" src="1000054264.png" alt="Farhan Ahammed Jannat">
-            </div>
-          </div>
-
-          <div style="font-size: 0.75rem; color: var(--acid-dim); letter-spacing: 0.1em; margin-bottom: 0.5rem;">[ IDENTITY DECRYPTED ]</div>
-          
-          <!-- Typing Target -->
-          <div style="min-height: 3.5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
-            <h2 id="typed-name" class="glow-text cursor-blink" style="font-size: 1.8rem; font-weight: bold; color: #a3ff80; letter-spacing: 0.05em;"></h2>
-          </div>
-
-          <!-- Sub-caption Line -->
-          <p id="typed-subline" class="subline-text">
-            "a selfish, introvert, angry, ugly, loser, dreaming boy is living in his fantasy world"
-          </p>
-
-          <!-- Next Button -->
-          <button id="btn-to-dossier" onclick="goToScreen('screen-dossier')" class="cyber-btn" style="display: none; max-width: 18rem;">
-            OPEN CLASSIFIED DOSSIER ►
-          </button>
+    <!-- HUD Footer Overlay -->
+    <footer class="fixed bottom-0 left-0 right-0 z-30 p-3 md:p-4 flex justify-between items-center text-[10px] md:text-xs tracking-wider border-t border-cyber-green/10 bg-cyber-black/90 backdrop-blur-sm text-cyber-gray">
+        <div>
+            SECURITY: <span class="text-cyber-green">82% ENCRYPTED</span>
         </div>
-      </div>
-    </section>
-
-    <!-- 4. MAIN DOSSIER / DATA SECTORS SCREEN -->
-    <section id="screen-dossier" class="screen">
-      <div class="screen-container">
-        <div class="dossier-box">
-          
-          <!-- Header -->
-          <div style="border-bottom: 1px solid rgba(140,255,97,0.3); padding-bottom: 1rem; margin-bottom: 1.2rem;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
-              <div>
-                <span style="font-size: 0.7rem; color: var(--acid-dim); letter-spacing: 0.1em; display: block;">SUBJECT FILE // #009412</span>
-                <h3 class="glow-text" style="font-size: 1.25rem; font-weight: bold;">FARHAN AHAMMED JANNAT</h3>
-              </div>
-              <span class="cyber-badge">STATUS: VERIFIED</span>
-            </div>
-            <p style="font-size: 0.75rem; color: rgba(140,255,97,0.7); font-style: italic; margin-top: 0.4rem;">
-              "a selfish, introvert, angry, ugly, loser, dreaming boy is living in his fantasy world"
-            </p>
-          </div>
-
-          <!-- Tab Bar -->
-          <div class="tab-bar">
-            <button id="tab-family-btn" onclick="switchTab('family')" class="tab-btn active-tab">1. PERSONAL & FAMILY</button>
-            <button id="tab-skills-btn" onclick="switchTab('skills')" class="tab-btn">2. SECTOR SKILLS</button>
-            <button id="tab-dream-btn" onclick="switchTab('dream')" class="tab-btn">3. THE DREAM</button>
-          </div>
-
-          <!-- Tab 1: Personal Details & Family Records -->
-          <div id="tab-family" class="tab-content" style="font-size: 0.85rem; line-height: 1.6;">
-            <div class="cards-grid">
-              
-              <!-- Personal Card -->
-              <div class="cyber-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(140,255,97,0.2); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
-                  <strong style="color: #a3ff80;">👤 PERSONAL DETAILS</strong>
-                  <span class="cyber-badge">ID: FAJ-94</span>
-                </div>
-                <div>
-                  <span class="field-label">FULL NAME:</span>
-                  <span class="field-val" style="font-weight: bold;">Farhan Ahammed Jannat</span>
-
-                  <span class="field-label">DATE OF BIRTH:</span>
-                  <span class="field-val">17 Oct 2008</span>
-
-                  <span class="field-label">HEIGHT:</span>
-                  <span class="field-val">5'10"</span>
-
-                  <span class="field-label">PRIMARY ROLE:</span>
-                  <span class="field-val">Video Editor & Graphic Designer</span>
-
-                  <span class="field-label">HOMETOWN:</span>
-                  <span class="field-val">Bizulia, Shailakupa, Jhenaidah</span>
-
-                  <span class="field-label">SECURITY CLEARANCE:</span>
-                  <span class="field-val" style="color: var(--acid);">Level 4 Classified</span>
-                </div>
-              </div>
-
-              <!-- Family Card -->
-              <div class="cyber-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(140,255,97,0.2); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
-                  <strong style="color: #a3ff80;">🏠 FAMILY RECORDS</strong>
-                  <span class="cyber-badge">RELATIONSHIPS</span>
-                </div>
-                <div>
-                  <span class="field-label">LINEAGE:</span>
-                  <span class="field-val">Elder son of the family</span>
-
-                  <span class="field-label">FATHER:</span>
-                  <span class="field-val" style="font-weight: bold;">Md Shahinur Rahman <span style="font-size: 0.75rem; color: var(--acid-dim);">(Army)</span></span>
-
-                  <span class="field-label">MOTHER:</span>
-                  <span class="field-val" style="font-weight: bold;">Mrs Fatematus Jhohora <span style="font-size: 0.75rem; color: var(--acid-dim);">(Housewife)</span></span>
-
-                  <span class="field-label">SIBLINGS:</span>
-                  <span class="field-val">2 little sisters</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Tab 2: Sector Skills -->
-          <div id="tab-skills" class="tab-content" style="display: none;">
-            <div class="cards-grid">
-              
-              <!-- Video Editing Card -->
-              <div class="cyber-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(140,255,97,0.2); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
-                  <strong style="color: #a3ff80;">🎬 VIDEO EDITING</strong>
-                  <span class="cyber-badge">LEVEL: MASTER</span>
-                </div>
-                <p style="font-size: 0.8rem; color: rgba(234,255,223,0.85); line-height: 1.5; margin-bottom: 0.5rem;">
-                  Cutting-edge post-production, dynamic motion graphics, sound design, storytelling, and cinematic visual transitions.
-                </p>
-              </div>
-
-              <!-- Graphic Design Card -->
-              <div class="cyber-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(140,255,97,0.2); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
-                  <strong style="color: #a3ff80;">🎨 GRAPHIC DESIGN</strong>
-                  <span class="cyber-badge">LEVEL: EXPERT</span>
-                </div>
-                <p style="font-size: 0.8rem; color: rgba(234,255,223,0.85); line-height: 1.5; margin-bottom: 0.5rem;">
-                  Cyberpunk identity design, dark aesthetic UI/UX composition, high-impact branding, typography, and promotional media.
-                </p>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Tab 3: The Dream -->
-          <div id="tab-dream" class="tab-content" style="display: none;">
-            <div class="cyber-card" style="text-align: center; padding: 2.5rem 1.5rem;">
-              <span class="cyber-badge" style="margin-bottom: 1rem;">PRIMARY OBJECTIVE</span>
-              <h4 class="glow-text" style="font-size: 1.6rem; color: #a3ff80; margin-bottom: 1.2rem; letter-spacing: 0.08em; font-weight: bold;">
-                "I WANT PEACE."
-              </h4>
-              <p style="font-size: 0.85rem; line-height: 1.8; color: rgba(234,255,223,0.85); max-width: 32rem; margin: 0 auto; font-style: italic;">
-                Beyond all noise, chaos, and digital creation, the ultimate destination is quiet mind and pure internal peace.
-              </p>
-            </div>
-          </div>
-
+        <div id="narratorStatus" class="text-cyber-green/80 italic font-mono truncate max-w-[200px] sm:max-w-md">
+            INVESTIGATION IN PROGRESS...
         </div>
-      </div>
-    </section>
+        <div>
+            PROTOCOL: <span class="text-cyber-green">NARRATOR_V3.1</span>
+        </div>
+    </footer>
 
-  </main>
+    <!-- Navigation Index Modal -->
+    <div id="navModal" class="fixed inset-0 z-50 bg-cyber-black/95 backdrop-blur-md hidden flex flex-col justify-center items-center p-6 border border-cyber-green/30 transition-opacity">
+        <div class="max-w-md w-full bg-cyber-card border border-cyber-green p-6 relative hud-corner shadow-2xl">
+            <div class="flex justify-between items-center border-b border-cyber-green/30 pb-3 mb-6">
+                <h3 class="text-cyber-green font-bold text-lg tracking-widest glow-green">[ SYSTEM MODULE INDEX ]</h3>
+                <button onclick="toggleNavMenu()" class="text-cyber-red hover:text-white font-mono text-xl">✕</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                <button onclick="jumpToScene(0)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">00. BOOT / INIT</button>
+                <button onclick="jumpToScene(3)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">01. IDENTITY FILE</button>
+                <button onclick="jumpToScene(4)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">02. PERSONALITY</button>
+                <button onclick="jumpToScene(5)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">03. BACKGROUND</button>
+                <button onclick="jumpToScene(6)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">04. FAMILY RECORD</button>
+                <button onclick="jumpToScene(7)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">05. DREAM / QUIET</button>
+                <button onclick="jumpToScene(8)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">06. EDUCATION</button>
+                <button onclick="jumpToScene(9)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">07. SKILL DATABASE</button>
+                <button onclick="jumpToScene(10)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">08. PROJECTS ARCHIVE</button>
+                <button onclick="jumpToScene(11)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">09. MEMORY VAULT</button>
+                <button onclick="jumpToScene(12)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">10. TERMINAL</button>
+                <button onclick="jumpToScene(13)" class="p-2 border border-cyber-green/20 hover:border-cyber-green hover:bg-cyber-green/10 text-left text-cyber-text transition-all">11. DIGITAL TRACE</button>
+                <button onclick="jumpToScene(14)" class="p-2 border border-cyber-red/40 hover:border-cyber-red hover:bg-cyber-red/10 text-left text-cyber-red transition-all">12. FINAL REVEAL</button>
+            </div>
+            <p class="text-[10px] text-cyber-gray mt-6 text-center">DIRECT SYSTEM ACCESS GRANTED</p>
+        </div>
+    </div>
 
-  <script>
-    // Audio Context Synthesizer Engine
-    let audioCtx = null;
-    let bgmPlaying = true;
-    let pianoLoopTimeout = null;
-
-    function initAudioContext() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    function startAudioEngine() {
-      initAudioContext();
-      if (bgmPlaying && !pianoLoopTimeout) {
-        playClassicPianoLoop();
-      }
-    }
-
-    // Classic Synthesized Acoustic Piano Note Generator
-    function playPianoNote(freq, duration = 3.5, velocity = 0.12) {
-      if (!audioCtx || !bgmPlaying) return;
-
-      try {
-        const osc = audioCtx.createOscillator();
-        const oscHarmonic = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        const filter = audioCtx.createBiquadFilter();
-
-        // Fundamental frequencies
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-        // Soft upper harmonic resonance
-        oscHarmonic.type = 'sine';
-        oscHarmonic.frequency.setValueAtTime(freq * 2, audioCtx.currentTime);
-
-        // Lowpass filter for warm classical piano timbre
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1200, audioCtx.currentTime);
-        filter.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + duration);
-
-        // Piano envelope: Fast attack, natural exponential decay
-        const now = audioCtx.currentTime;
-        gainNode.gain.setValueAtTime(0, now);
-        gainNode.gain.linearRampToValueAtTime(velocity, now + 0.02);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-        osc.connect(filter);
-        oscHarmonic.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        osc.start(now);
-        oscHarmonic.start(now);
-        osc.stop(now + duration);
-        oscHarmonic.stop(now + duration);
-      } catch (e) {
-        // Fallback catch
-      }
-    }
-
-    // Classic Moody Piano Arpeggio Progression
-    const pianoChords = [
-      // Am Chord (A3, C4, E4, A4)
-      [220.00, 261.63, 329.63, 440.00],
-      // F Chord (F3, A3, C4, F4)
-      [174.61, 220.00, 261.63, 349.23],
-      // C Chord (C3, G3, C4, E4)
-      [130.81, 196.00, 261.63, 329.63],
-      // G Chord (G3, B3, D4, G4)
-      [196.00, 246.94, 293.66, 392.00]
-    ];
-
-    let currentChordIdx = 0;
-
-    function playClassicPianoLoop() {
-      if (!bgmPlaying) return;
-
-      const chord = pianoChords[currentChordIdx];
-      currentChordIdx = (currentChordIdx + 1) % pianoChords.length;
-
-      // Play soft arpeggiated piano notes
-      chord.forEach((noteFreq, idx) => {
-        setTimeout(() => {
-          if (bgmPlaying) {
-            playPianoNote(noteFreq, 4.0, 0.08 + (idx * 0.015));
-          }
-        }, idx * 450);
-      });
-
-      // Repeat loop seamlessly every 3.2 seconds
-      pianoLoopTimeout = setTimeout(playClassicPianoLoop, 3200);
-    }
-
-    function toggleBGM(e) {
-      if (e) e.stopPropagation();
-      bgmPlaying = !bgmPlaying;
-      const btn = document.getElementById('bgm-toggle-btn');
-      
-      if (bgmPlaying) {
-        btn.innerText = '🔊 PIANO BGM: ON';
-        startAudioEngine();
-      } else {
-        btn.innerText = '🔇 PIANO BGM: OFF';
-        if (pianoLoopTimeout) {
-          clearTimeout(pianoLoopTimeout);
-          pianoLoopTimeout = null;
-        }
-      }
-    }
-
-    // Digital Static Glitch SFX on Click
-    function playGlitchSound() {
-      if (!audioCtx) return;
-      try {
-        const bufferSize = audioCtx.sampleRate * 0.12;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const output = buffer.getChannelData(0);
+    <!-- Main Interactive Stage Container -->
+    <main class="relative z-10 flex-grow flex items-center justify-center p-4 md:p-8 my-16 max-w-5xl mx-auto w-full min-h-[70vh]">
         
-        for (let i = 0; i < bufferSize; i++) {
-          output[i] = Math.random() * 2 - 1;
+        <!-- SCENE 0: BOOT / INITIALIZATION -->
+        <section id="scene-0" class="scene w-full flex flex-col items-center justify-center text-center space-y-8">
+            <div class="relative w-40 h-40 flex items-center justify-center">
+                <!-- Circular Loader Ring -->
+                <svg class="w-full h-full transform -rotate-90">
+                    <circle cx="80" cy="80" r="70" stroke="#112217" stroke-width="6" fill="transparent"/>
+                    <circle id="progressCircle" cx="80" cy="80" r="70" stroke="#00ff66" stroke-width="6" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" fill="transparent" class="transition-all duration-200"/>
+                </svg>
+                <!-- Percentage Number Centered -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span id="bootPercent" class="text-3xl font-bold font-mono text-cyber-green glow-green">0%</span>
+                    <span class="text-[9px] text-cyber-gray uppercase tracking-widest mt-1">LOADING</span>
+                </div>
+            </div>
+
+            <!-- Terminal Log Lines -->
+            <div class="font-mono text-xs text-cyber-green/80 space-y-1 h-20 text-left max-w-sm w-full bg-cyber-card/60 p-3 border border-cyber-green/20 rounded">
+                <p id="bootLog1">> SYSTEM INITIALIZING...</p>
+                <p id="bootLog2" class="opacity-0">> MEMORY MODULE ........ 12%</p>
+                <p id="bootLog3" class="opacity-0">> IDENTITY DATABASE ..... 31%</p>
+                <p id="bootLog4" class="opacity-0">> ACCESSING SUBJECT ..... 89%</p>
+            </div>
+        </section>
+
+        <!-- SCENE 1: MAIN QUESTION -->
+        <section id="scene-1" class="scene hidden w-full flex flex-col items-center justify-center text-center space-y-10 py-12">
+            <div class="space-y-3">
+                <p class="text-xs font-mono text-cyber-red tracking-widest uppercase glow-red">[ UNKNOWN SUBJECT DETECTED ]</p>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-mono font-bold tracking-tight text-white leading-tight">
+                    DO YOU KNOW,<br><span class="text-cyber-green glow-green">WHO I AM?!</span>
+                </h1>
+            </div>
+
+            <div class="pt-6">
+                <button onclick="startAccessSequence()" class="group relative inline-flex items-center justify-center px-8 py-4 font-mono font-bold text-sm text-cyber-green uppercase tracking-widest bg-cyber-card border-2 border-cyber-green hover:bg-cyber-green hover:text-cyber-black transition-all duration-300 hud-corner shadow-lg box-glow-green">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <span>[ ACCESS FILE ]</span>
+                        <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    </span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCENE 2: ACCESS SCANNING ANIMATION -->
+        <section id="scene-2" class="scene hidden w-full flex flex-col items-center justify-center text-center space-y-6">
+            <div class="w-full max-w-md bg-cyber-card p-8 border border-cyber-green/40 relative hud-corner overflow-hidden">
+                <div class="absolute inset-0 scanner-line"></div>
+                <div class="space-y-4 font-mono">
+                    <p class="text-cyber-green text-sm animate-pulse">> DECRYPTING SECURITY PROTOCOLS...</p>
+                    <p class="text-xs text-cyber-gray">> PARSING ENCRYPTED NODES...</p>
+                    <div class="h-1 bg-cyber-border w-full rounded overflow-hidden">
+                        <div id="accessBar" class="h-full bg-cyber-green w-0 transition-all duration-1000"></div>
+                    </div>
+                    <div id="accessStatus" class="text-xl font-bold text-cyber-green pt-2 opacity-0 glow-green">
+                        ACCESS GRANTED
+                    </div>
+                    <p id="accessSub" class="text-xs text-cyber-gray opacity-0">CLASSIFIED // SUBJECT FILE UNLOCKED</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCENE 3: NARRATOR & IDENTITY REVEAL -->
+        <section id="scene-3" class="scene hidden w-full flex flex-col justify-center space-y-8 max-w-2xl">
+            <!-- Narrator Dialogue Card -->
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text space-y-2">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p id="narratorText1" class="leading-relaxed">"His code name is Cipher13."</p>
+            </div>
+
+            <!-- Identity Card Component -->
+
+
+            <div class="flex justify-end pt-4">
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10 transition-colors flex items-center space-x-2">
+                    <span>CONTINUE INVESTIGATION</span>
+                    <span>→</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCENE 4: PERSONALITY & QUOTE -->
+        <section id="scene-4" class="scene hidden w-full flex flex-col justify-center space-y-8 max-w-2xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p class="leading-relaxed">"If you ask him who he is... this is how he describes himself."</p>
+            </div>
+
+            <!-- Self Description Quote Card -->
+            <div class="bg-cyber-card p-8 border border-cyber-red/50 hud-corner hud-corner-red space-y-4 relative overflow-hidden">
+                <div class="absolute top-0 right-0 px-3 py-1 bg-cyber-red/20 text-cyber-red text-[10px] font-mono border-b border-l border-cyber-red">
+                    RAW SUBJECT QUOTE
+                </div>
+                
+                <p class="text-xs text-cyber-gray font-mono uppercase tracking-widest">PERSONAL ASSESSMENT STATEMENT:</p>
+                
+                <blockquote class="text-xl md:text-2xl font-mono text-cyber-red italic leading-relaxed pt-2 glow-red">
+                    "A selfish, introvert, ugly, angry, unsmart, immature boy is living in his fantasy world."
+                </blockquote>
+
+                <div class="border-t border-cyber-red/20 pt-4 text-right">
+                    <span class="text-xs text-cyber-gray font-mono">— DISCLOSED BY SUBJECT</span>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10">NEXT MODULE →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 5: LIFE / BACKGROUND -->
+        <section id="scene-5" class="scene hidden w-full flex flex-col justify-center space-y-8 max-w-2xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text space-y-2">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p class="leading-relaxed">"He doesn't simply like technology..."</p>
+                <p class="text-cyber-green font-bold leading-relaxed pt-2">"He likes building things with it."</p>
+            </div>
+
+            <div class="bg-cyber-card p-6 border border-cyber-green/30 hud-corner space-y-4 font-mono text-sm text-cyber-text">
+                <div class="flex items-center space-x-2 text-cyber-green border-b border-cyber-green/20 pb-3">
+                    <span class="w-2 h-2 bg-cyber-green"></span>
+                    <h3 class="font-bold tracking-wider">BEHIND THE SCREEN</h3>
+                </div>
+                <p class="text-xs leading-relaxed text-cyber-gray">
+                    Beyond digital networks and handles, Cipher spends his time experimenting across code, visual editing, and web systems. Turning ideas into digital reality inside his own crafted world.
+                </p>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10">NEXT MODULE →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 6: FAMILY SECTION -->
+        <section id="scene-6" class="scene hidden w-full flex flex-col justify-center space-y-6 max-w-2xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p class="leading-relaxed">"A classified scan of his familial records..."</p>
+            </div>
+
+            <div class="bg-cyber-card p-6 border border-cyber-green/30 hud-corner space-y-6 font-mono">
+                <div class="flex justify-between items-center border-b border-cyber-green/20 pb-3">
+                    <h3 class="text-cyber-green font-bold tracking-wider text-sm">FAMILY RECORD // PARTIALLY DISCLOSED</h3>
+                    <span class="text-[10px] text-cyber-gray">FILE ID: FAM-0928</span>
+                </div>
+
+                <div class="space-y-4 text-xs">
+                    <div class="p-3 bg-cyber-black/60 border border-cyber-green/20 flex justify-between items-center">
+                        <div>
+                            <span class="text-cyber-gray text-[10px] uppercase block">FATHER:</span>
+                            <span class="text-white font-bold text-sm">Md. Shahinur Rahman</span>
+                        </div>
+                        <span class="px-2 py-1 bg-cyber-green/10 border border-cyber-green/30 text-cyber-green">OCCUPATION: ARMY</span>
+                    </div>
+
+                    <div class="p-3 bg-cyber-black/60 border border-cyber-green/20 flex justify-between items-center">
+                        <div>
+                            <span class="text-cyber-gray text-[10px] uppercase block">MOTHER:</span>
+                            <span class="text-white font-bold text-sm">Mrs Fatematus Jhohora</span>
+                        </div>
+                        <span class="px-2 py-1 bg-cyber-green/10 border border-cyber-green/30 text-cyber-green">OCCUPATION: HOUSE-WIFE</span>
+                    </div>
+
+                    <div class="p-3 bg-cyber-black/60 border border-cyber-green/20 flex justify-between items-center">
+                        <div>
+                            <span class="text-cyber-gray text-[10px] uppercase block">SIBLINGS:</span>
+                            <span class="text-white font-bold text-sm">Two younger sisters</span>
+                        </div>
+                        <span class="px-2 py-1 bg-cyber-gray/10 text-cyber-gray">VERIFIED</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10">NEXT MODULE →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 7: DREAM / QUIET MOMENT -->
+        <section id="scene-7" class="scene hidden w-full flex flex-col items-center justify-center text-center space-y-8 py-16">
+            <div class="space-y-6 font-mono max-w-lg">
+                <p class="text-xs text-cyber-gray tracking-widest uppercase opacity-60 font-mono">"And after everything..."</p>
+
+                <h2 class="text-3xl md:text-5xl font-mono font-bold text-white tracking-widest py-4 transition-all duration-1000">
+                    I want peace.
+                </h2>
+
+                <p class="text-xs text-cyber-green/60 italic font-mono pt-4">// A QUIET TRACE DISCOVERED IN THE DATA NOISE</p>
+            </div>
+
+            <div class="pt-8">
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green/40 text-cyber-green text-xs font-mono hover:bg-cyber-green/10 transition-colors">
+                    PROCEED →
+                </button>
+            </div>
+        </section>
+
+        <!-- SCENE 8: EDUCATION -->
+        <section id="scene-8" class="scene hidden w-full flex flex-col justify-center space-y-8 max-w-2xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p class="leading-relaxed">"Academic log evaluation..."</p>
+            </div>
+
+            <!-- Timeline Card -->
+            <div class="bg-cyber-card p-8 border border-cyber-green/30 hud-corner space-y-8 font-mono">
+                <h3 class="text-cyber-green font-bold tracking-widest text-sm border-b border-cyber-green/20 pb-3">
+                    ACADEMIC TIMELINE // VERIFIED
+                </h3>
+
+                <div class="relative border-l-2 border-cyber-green/40 ml-4 pl-6 space-y-8">
+                    <!-- Event 1 -->
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1 w-3 h-3 bg-cyber-green border-2 border-cyber-black"></div>
+                        <span class="text-xs text-cyber-green font-bold px-2 py-0.5 bg-cyber-green/10 border border-cyber-green/30">2025</span>
+                        <h4 class="text-lg font-bold text-white mt-2">SSC COMPLETED</h4>
+                        <p class="text-xs text-cyber-gray mt-1">Secondary School Certificate Examination concluded.</p>
+                    </div>
+
+                    <!-- Event 2 -->
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1 w-3 h-3 bg-cyber-green animate-ping"></div>
+                        <div class="absolute -left-[31px] top-1 w-3 h-3 bg-cyber-green border-2 border-cyber-black"></div>
+                        <span class="text-xs text-cyber-green font-bold px-2 py-0.5 bg-cyber-green/20 border border-cyber-green">CURRENT</span>
+                        <h4 class="text-lg font-bold text-white mt-2">CLASS XII (HSC STAGE)</h4>
+                        <p class="text-xs text-cyber-gray mt-1">Higher Secondary Certificate academic progression active.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10">NEXT MODULE →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 9: SKILLS -->
+        <section id="scene-9" class="scene hidden w-full flex flex-col justify-center space-y-6 max-w-2xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p class="leading-relaxed">"These are the tools and capabilities discovered in his environment."</p>
+            </div>
+
+            <div class="bg-cyber-card p-6 border border-cyber-green/30 hud-corner space-y-6 font-mono">
+                <div class="flex justify-between items-center border-b border-cyber-green/20 pb-3">
+                    <h3 class="text-cyber-green font-bold tracking-wider text-sm">[ SKILL DATABASE ]</h3>
+                    <span class="text-[10px] text-cyber-gray">MODULE 07</span>
+                </div>
+
+                <!-- Skill Categories -->
+                <div class="space-y-4">
+                    <!-- Category 1: Video Editing -->
+                    <div class="p-4 bg-cyber-black/70 border border-cyber-green/20 space-y-2">
+                        <span class="text-xs text-cyber-green font-bold block">// VIDEO EDITING</span>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">Adobe Premiere Pro</span>
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">CapCut</span>
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">Filmora</span>
+                        </div>
+                    </div>
+
+                    <!-- Category 2: Web / Programming -->
+                    <div class="p-4 bg-cyber-black/70 border border-cyber-green/20 space-y-2">
+                        <span class="text-xs text-cyber-green font-bold block">// WEB & PROGRAMMING</span>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">HTML5</span>
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">CSS</span>
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">C</span>
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">Basic Python</span>
+                        </div>
+                    </div>
+
+                    <!-- Category 3: Design -->
+                    <div class="p-4 bg-cyber-black/70 border border-cyber-green/20 space-y-2">
+                        <span class="text-xs text-cyber-green font-bold block">// GRAPHIC DESIGN</span>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">Photoshop</span>
+                            <span class="px-3 py-1 bg-cyber-green/10 border border-cyber-green/30 text-xs text-white">Canva</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10">NEXT MODULE →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 10: PROJECTS ARCHIVE -->
+        <section id="scene-10" class="scene hidden w-full flex flex-col justify-center space-y-6 max-w-3xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p class="leading-relaxed">"And now... you are looking at one of his experiments."</p>
+            </div>
+
+            <div class="bg-cyber-card p-6 border border-cyber-green/30 hud-corner space-y-6 font-mono">
+                <div class="flex justify-between items-center border-b border-cyber-green/20 pb-3">
+                    <h3 class="text-cyber-green font-bold tracking-wider text-sm">[ CLASSIFIED PROJECT ARCHIVE ]</h3>
+                    <span class="text-[10px] text-cyber-gray">RECURSIVE SYSTEM DETECTED</span>
+                </div>
+
+                <!-- Projects List Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Project 1 (This website) -->
+                    <div class="p-4 bg-cyber-greenDark/30 border-2 border-cyber-green relative">
+                        <span class="absolute top-2 right-2 text-[9px] bg-cyber-green text-cyber-black px-1 font-bold">ACTIVE</span>
+                        <span class="text-[10px] text-cyber-gray">PROJECT_ID: PRJ-001</span>
+                        <h4 class="text-white font-bold text-sm mt-1">PROJECT // CIPHER</h4>
+                        <p class="text-[11px] text-cyber-gray mt-2">Interactive Cyberpunk Storytelling Personal Website investigation archive.</p>
+                        <p class="text-[10px] text-cyber-green mt-2">TOOLS: HTML5, CSS, JS, Tailwind</p>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="p-4 bg-cyber-black/60 border border-cyber-green/20">
+                        <span class="text-[10px] text-cyber-gray">PROJECT_ID: PRJ-002</span>
+                        <h4 class="text-white font-bold text-sm mt-1">PORTFOLIO WEB</h4>
+                        <p class="text-[11px] text-cyber-gray mt-2">Personal web interface built for identity and project showcasing.</p>
+                        <p class="text-[10px] text-cyber-green mt-2">TOOLS: Web Tech</p>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="p-4 bg-cyber-black/60 border border-cyber-green/20">
+                        <span class="text-[10px] text-cyber-gray">PROJECT_ID: PRJ-003</span>
+                        <h4 class="text-white font-bold text-sm mt-1">LOVE-LETTER WEBSITE</h4>
+                        <p class="text-[11px] text-cyber-gray mt-2">Custom sentimental web experiment designed for expression.</p>
+                        <p class="text-[10px] text-cyber-green mt-2">TOOLS: HTML, CSS, JS</p>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="p-4 bg-cyber-black/60 border border-cyber-green/20">
+                        <span class="text-[10px] text-cyber-gray">PROJECT_ID: PRJ-004</span>
+                        <h4 class="text-white font-bold text-sm mt-1">AI WEBSITE EXPERIMENT & VIDEO PROJECTS</h4>
+                        <p class="text-[11px] text-cyber-gray mt-2">Experimental video editing renders and AI technology integrations.</p>
+                        <p class="text-[10px] text-cyber-green mt-2">TOOLS: Premiere, CapCut, Filmora</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10">NEXT MODULE →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 11: MEMORY ARCHIVE -->
+        <section id="scene-11" class="scene hidden w-full flex flex-col justify-center space-y-6 max-w-2xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p class="leading-relaxed">"Some records remain inaccessible or corrupted..."</p>
+            </div>
+
+            <div class="bg-cyber-card p-6 border border-cyber-green/30 hud-corner space-y-6 font-mono">
+                <div class="flex justify-between items-center border-b border-cyber-green/20 pb-3">
+                    <h3 class="text-cyber-green font-bold tracking-wider text-sm">[ MEMORY ARCHIVE ]</h3>
+                    <span class="text-[10px] text-cyber-gray">INTERACTIVE DATA BLOCKS</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Memory 1 -->
+                    <button onclick="openMemoryModal('MEMORY_001', 'Farhan Ahammed Jannat, known digitally as CIPHER13. Born 17 Oct 2008 in Bizulia, Bangladesh.', 'ACCESSIBLE')" class="p-4 bg-cyber-black border border-cyber-green/40 hover:border-cyber-green text-left transition-all group">
+                        <div class="flex justify-between items-center text-[10px] text-cyber-gray">
+                            <span>FILE_001</span>
+                            <span class="text-cyber-green font-bold">[ ACCESSIBLE ]</span>
+                        </div>
+                        <p class="text-white font-bold text-sm mt-2 group-hover:text-cyber-green">IDENTITY CORE</p>
+                    </button>
+
+                    <!-- Memory 2 (Corrupted) -->
+                    <button onclick="triggerCorruptedGlitch('MEMORY_002')" class="p-4 bg-cyber-black border border-cyber-red/40 hover:border-cyber-red text-left transition-all group">
+                        <div class="flex justify-between items-center text-[10px] text-cyber-gray">
+                            <span>FILE_002</span>
+                            <span class="text-cyber-red font-bold animate-pulse">[ CORRUPTED ]</span>
+                        </div>
+                        <p class="text-cyber-red font-bold text-sm mt-2">CLASSIFIED MEMORY</p>
+                    </button>
+
+                    <!-- Memory 3 (Locked) -->
+                    <button onclick="triggerCorruptedGlitch('MEMORY_003')" class="p-4 bg-cyber-black border border-cyber-gray/30 hover:border-cyber-red text-left transition-all group">
+                        <div class="flex justify-between items-center text-[10px] text-cyber-gray">
+                            <span>FILE_003</span>
+                            <span class="text-cyber-gray font-bold">[ LOCKED ]</span>
+                        </div>
+                        <p class="text-cyber-gray font-bold text-sm mt-2">RESTRICTED NODE</p>
+                    </button>
+
+                    <!-- Memory 4 (Redacted) -->
+                    <button onclick="triggerCorruptedGlitch('MEMORY_004')" class="p-4 bg-cyber-black border border-cyber-gray/30 hover:border-cyber-red text-left transition-all group">
+                        <div class="flex justify-between items-center text-[10px] text-cyber-gray">
+                            <span>FILE_004</span>
+                            <span class="text-cyber-gray font-bold">[ REDACTED ]</span>
+                        </div>
+                        <p class="text-cyber-gray font-bold text-sm mt-2">ENCRYPTED LOG</p>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10">TERMINAL ACCESS →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 12: TERMINAL -->
+        <section id="scene-12" class="scene hidden w-full flex flex-col justify-center space-y-4 max-w-3xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// SYSTEM TERMINAL INTERFACE:</p>
+                <p class="leading-relaxed">Type <span class="text-cyber-green underline">help</span> to list available commands.</p>
+            </div>
+
+            <!-- Terminal Screen Box -->
+            <div class="bg-cyber-black p-4 border border-cyber-green/40 hud-corner font-mono text-xs text-cyber-green space-y-3 h-80 flex flex-col justify-between shadow-2xl">
+                <!-- Terminal Output Display -->
+                <div id="terminalOutput" class="overflow-y-auto space-y-2 pr-2 flex-grow">
+                    <p class="text-cyber-gray">// CIPHER TERMINAL SYSTEM v2.4 initialized.</p>
+                    <p class="text-cyber-gray">// Enter command below to query system node.</p>
+                </div>
+
+                <!-- Terminal Input Form -->
+                <form onsubmit="handleTerminalSubmit(event)" class="flex items-center space-x-2 border-t border-cyber-green/20 pt-2">
+                    <span class="text-cyber-green font-bold">CIPHER@UNKNOWN_NODE:~$</span>
+                    <input type="text" id="terminalInput" class="bg-transparent border-none outline-none text-white flex-grow font-mono focus:ring-0 text-xs" focus autocomplete="off" spellcheck="false" placeholder="type whoami, identity, skills, socials...">
+                </form>
+            </div>
+
+            <div class="flex justify-between items-center pt-2">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-green text-cyber-green text-xs font-mono hover:bg-cyber-green/10">DIGITAL TRACE →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 13: DIGITAL TRACE / SOCIALS -->
+        <section id="scene-13" class="scene hidden w-full flex flex-col justify-center space-y-6 max-w-2xl">
+            <div class="border-l-2 border-cyber-green pl-4 py-2 bg-cyber-greenDark/20 font-mono text-sm text-cyber-text">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase">// ANONYMOUS NARRATOR:</p>
+                <p class="leading-relaxed">"His verified digital presence across external networks."</p>
+            </div>
+
+            <div class="bg-cyber-card p-6 border border-cyber-green/30 hud-corner space-y-6 font-mono">
+                <div class="flex justify-between items-center border-b border-cyber-green/20 pb-3">
+                    <h3 class="text-cyber-green font-bold tracking-wider text-sm">[ DIGITAL TRACE // SOCIAL ACCOUNTS ]</h3>
+                    <span class="text-[10px] text-cyber-gray">EXTERNAL LINKS</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Instagram -->
+                    <a href="https://instagram.com/__cipher__13" target="_blank" rel="noopener noreferrer" class="p-4 bg-cyber-black border border-cyber-green/30 hover:border-cyber-green hover:bg-cyber-green/10 transition-all flex justify-between items-center group">
+                        <div>
+                            <span class="text-[10px] text-cyber-gray block">INSTAGRAM</span>
+                            <span class="text-white font-bold group-hover:text-cyber-green">__cipher__13</span>
+                        </div>
+                        <span class="text-cyber-green">↗</span>
+                    </a>
+
+                    <!-- Facebook -->
+                    <a href="https://facebook.com/farhan.aj.696421" target="_blank" rel="noopener noreferrer" class="p-4 bg-cyber-black border border-cyber-green/30 hover:border-cyber-green hover:bg-cyber-green/10 transition-all flex justify-between items-center group">
+                        <div>
+                            <span class="text-[10px] text-cyber-gray block">FACEBOOK</span>
+                            <span class="text-white font-bold group-hover:text-cyber-green">farhan.aj.696421</span>
+                        </div>
+                        <span class="text-cyber-green">↗</span>
+                    </a>
+
+                    <!-- GitHub -->
+                    <a href="https://github.com/farhan886" target="_blank" rel="noopener noreferrer" class="p-4 bg-cyber-black border border-cyber-green/30 hover:border-cyber-green hover:bg-cyber-green/10 transition-all flex justify-between items-center group">
+                        <div>
+                            <span class="text-[10px] text-cyber-gray block">GITHUB</span>
+                            <span class="text-white font-bold group-hover:text-cyber-green">farhan886</span>
+                        </div>
+                        <span class="text-cyber-green">↗</span>
+                    </a>
+
+                    <!-- X / Twitter -->
+                    <a href="https://x.com/a93274" target="_blank" rel="noopener noreferrer" class="p-4 bg-cyber-black border border-cyber-green/30 hover:border-cyber-green hover:bg-cyber-green/10 transition-all flex justify-between items-center group">
+                        <div>
+                            <span class="text-[10px] text-cyber-gray block">X (TWITTER)</span>
+                            <span class="text-white font-bold group-hover:text-cyber-green">a93274</span>
+                        </div>
+                        <span class="text-cyber-green">↗</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="prevScene()" class="px-4 py-2 border border-cyber-gray/30 text-cyber-gray text-xs font-mono hover:bg-cyber-gray/10">← PREV</button>
+                <button onclick="nextScene()" class="px-6 py-2 border border-cyber-red/50 text-cyber-red text-xs font-mono hover:bg-cyber-red/10">FINAL CLASSIFIED REVEAL →</button>
+            </div>
+        </section>
+
+        <!-- SCENE 14: FINAL REVEAL & SHUTDOWN -->
+        <section id="scene-14" class="scene hidden w-full flex flex-col items-center justify-center text-center space-y-8 py-12 max-w-xl">
+            <div id="finalContent" class="space-y-6 font-mono transition-opacity duration-1000">
+                <p class="text-xs text-cyber-green font-bold tracking-widest uppercase glow-green">[ SYSTEM: INFORMATION COMPLETE ]</p>
+                
+                <div class="space-y-3 text-sm md:text-base text-cyber-text leading-relaxed">
+                    <p id="finalLine1" class="opacity-0 transition-opacity duration-700">Now you know his name.</p>
+                    <p id="finalLine2" class="opacity-0 transition-opacity duration-700">You know what he creates.</p>
+                    <p id="finalLine3" class="opacity-0 transition-opacity duration-700">You know what he can do.</p>
+                </div>
+
+                <div class="pt-4">
+                    <p id="finalLine4" class="text-lg text-cyber-red font-bold opacity-0 transition-opacity duration-700 glow-red">But...</p>
+                </div>
+
+                <div class="pt-2">
+                    <h2 id="finalLine5" class="text-2xl md:text-4xl font-bold text-white opacity-0 transition-opacity duration-1000 tracking-wider">
+                        Do you really know him?
+                    </h2>
+                </div>
+            </div>
+        
+
+                <div id="finalLine6" class="pt-8 opacity-0 transition-opacity duration-1000">
+                    <p class="text-xl font-bold text-cyber-green glow-green">CIPHER13 // END OF FILE</p>
+                </div>
+            </div>
+
+            <div id="terminatedMsg" class="hidden text-xs text-cyber-gray font-mono pt-12 animate-pulse">
+                CONNECTION TERMINATED.
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Memory Modal Dialog -->
+    <div id="memoryModal" class="fixed inset-0 z-50 bg-cyber-black/90 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-cyber-card border border-cyber-green p-6 max-w-md w-full hud-corner space-y-4 font-mono">
+            <div class="flex justify-between items-center border-b border-cyber-green/20 pb-2">
+                <h4 id="memTitle" class="text-cyber-green font-bold text-sm">MEMORY DETAIL</h4>
+                <button onclick="closeMemoryModal()" class="text-cyber-red">✕</button>
+            </div>
+            <p id="memBody" class="text-xs text-cyber-text leading-relaxed"></p>
+            <div class="text-right pt-2">
+                <button onclick="closeMemoryModal()" class="px-4 py-1 bg-cyber-green/10 border border-cyber-green text-cyber-green text-xs">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Web Audio Synthesizer for SFX
+        let audioEnabled = true;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
         }
 
-        const whiteNoise = audioCtx.createBufferSource();
-        whiteNoise.buffer = buffer;
+        function playSound(type) {
+            if (!audioEnabled) return;
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
 
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 1200 + Math.random() * 2000;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
 
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
-
-        whiteNoise.connect(filter);
-        filter.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        whiteNoise.start();
-      } catch (e) {
-        // Fallback
-      }
-    }
-
-    // Trigger Cyber Glitch on Screen Navigation
-    function triggerGlitchEffect(callback) {
-      playGlitchSound();
-      document.body.classList.add('glitch-active');
-      const activeScreen = document.querySelector('.screen.active');
-      if (activeScreen) {
-        activeScreen.classList.add('screen-glitch');
-      }
-
-      setTimeout(() => {
-        if (callback) callback();
-      }, 120);
-
-      setTimeout(() => {
-        document.body.classList.remove('glitch-active');
-        if (activeScreen) {
-          activeScreen.classList.remove('screen-glitch');
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'beep') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.08);
+                } else if (type === 'glitch') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.15);
+                }
+            } catch (e) {
+                // Audio safely fallback
+            }
         }
-      }, 300);
-    }
 
-    // Screen Navigation Engine
-    function goToScreen(screenId) {
-      triggerGlitchEffect(() => {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const target = document.getElementById(screenId);
-        if (target) {
-          target.classList.add('active');
-          if (screenId === 'screen-typing') {
-            startTypingSequence();
-          }
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            document.getElementById('audioStatus').innerText = audioEnabled ? 'AUDIO: ON' : 'AUDIO: OFF';
+            document.getElementById('audioIcon').innerText = audioEnabled ? '🔊' : '🔇';
         }
-      });
-    }
 
-    // Question 1 Answer Trigger
-    function answerQ1(type) {
-      const msgBox = document.getElementById('q1-msg-who');
-      if (type === 'idc') {
-        msgBox.innerText = '"Indifference is an illusion. Your curiosity brought you here anyway."';
-      } else {
-        msgBox.innerText = '"Good. Curiosity is the key... but once opened, the file cannot be unlearned."';
-      }
-      goToScreen('screen-q1-response');
-    }
+        // Canvas Particle & Data Stream Animation
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
 
-    // Dynamic Staggered Loading Bar Engine with Pauses
-    function startLoadingSequence() {
-      const bar = document.getElementById('loader-bar');
-      const percentTxt = document.getElementById('loader-percent');
-      const statusTxt = document.getElementById('loader-status');
-
-      // Stops/Pauses at specific percentages for cyberpunk realism
-      const milestones = [
-        { pct: 14, status: 'INITIALIZING DECRYPTION PROTOCOL...' },
-        { pct: 37, status: 'BYPASSING FIREWALL SECTORS...' },
-        { pct: 62, status: 'EXTRACTING BIOMETRIC HASH...' },
-        { pct: 88, status: 'DECRYPTING CLASSIFIED IDENTIFIER...' },
-        { pct: 100, status: 'ACCESS GRANTED.' }
-      ];
-
-      let currentPct = 0;
-      let milestoneIdx = 0;
-
-      function step() {
-        const target = milestones[milestoneIdx];
-
-        if (currentPct < target.pct) {
-          currentPct += Math.floor(Math.random() * 3) + 1;
-          if (currentPct > target.pct) currentPct = target.pct;
-
-          bar.style.width = currentPct + '%';
-          percentTxt.innerText = currentPct + '%';
-          statusTxt.innerText = target.status;
-
-          const speed = Math.floor(Math.random() * 40) + 30;
-          setTimeout(step, speed);
-        } else if (milestoneIdx < milestones.length - 1) {
-          milestoneIdx++;
-          // Staggered stall pause duration
-          const pauseTime = Math.floor(Math.random() * 400) + 250;
-          setTimeout(step, pauseTime);
-        } else {
-          setTimeout(() => {
-            goToScreen('screen-q1');
-          }, 400);
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-      }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-      step();
-    }
+        const particles = Array.from({ length: 40 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            speed: 0.2 + Math.random() * 0.5,
+            size: 1 + Math.random() * 2,
+            opacity: Math.random() * 0.5
+        }));
 
-    // Specialized Multi-Stage Typing Animation: Jann -> Backspace -> AJ -> Backspace -> Farhan Ahammed Jannat
-    let typingExecuted = false;
-    function startTypingSequence() {
-      if (typingExecuted) return;
-      typingExecuted = true;
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff66';
 
-      const nameElem = document.getElementById('typed-name');
-      const subline = document.getElementById('typed-subline');
-      const btn = document.getElementById('btn-to-dossier');
-      const realPortrait = document.getElementById('real-portrait');
-      const mysteryIcon = document.getElementById('mystery-icon');
-      const portraitBox = document.getElementById('target-portrait-box');
-
-      function typeString(str, onComplete) {
-        let i = 0;
-        function t() {
-          if (i < str.length) {
-            nameElem.innerText += str.charAt(i);
-            i++;
-            setTimeout(t, 90);
-          } else {
-            if (onComplete) onComplete();
-          }
-        }
-        t();
-      }
-
-      function eraseString(onComplete) {
-        function e() {
-          let curr = nameElem.innerText;
-          if (curr.length > 0) {
-            nameElem.innerText = curr.substring(0, curr.length - 1);
-            setTimeout(e, 60);
-          } else {
-            if (onComplete) onComplete();
-          }
-        }
-        e();
-      }
-
-      // Sequence: "Jann" -> backspace -> "AJ" -> backspace -> "Farhan Ahammed Jannat"
-      setTimeout(() => {
-        typeString("Jann", () => {
-          setTimeout(() => {
-            eraseString(() => {
-              setTimeout(() => {
-                typeString("AJ", () => {
-                  setTimeout(() => {
-                    eraseString(() => {
-                      setTimeout(() => {
-                        typeString("Farhan Ahammed Jannat", () => {
-                          // Reveal Image Morph Effect
-                          setTimeout(() => {
-                            triggerGlitchEffect(() => {
-                              mysteryIcon.style.display = 'none';
-                              realPortrait.style.display = 'block';
-                              setTimeout(() => {
-                                realPortrait.style.opacity = '1';
-                                portraitBox.classList.add('revealed');
-                              }, 50);
-                            });
-                          }, 300);
-
-                          // Show Sub-line and Next Button
-                          setTimeout(() => {
-                            subline.style.opacity = '1';
-                            btn.style.display = 'block';
-                          }, 800);
-                        });
-                      }, 250);
-                    });
-                  }, 450);
-                });
-              }, 250);
+            particles.forEach(p => {
+                ctx.globalAlpha = p.opacity;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+                p.y -= p.speed;
+                if (p.y < 0) {
+                    p.y = canvas.height;
+                    p.x = Math.random() * canvas.width;
+                }
             });
-          }, 450);
-        });
-      }, 400);
-    }
 
-    // Tab Switching with Glitch Feedback
-    function switchTab(tabKey) {
-      triggerGlitchEffect(() => {
-        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+            requestAnimationFrame(drawCanvas);
+        }
+        drawCanvas();
 
-        const targetTab = document.getElementById('tab-' + tabKey);
-        const targetBtn = document.getElementById('tab-' + tabKey + '-btn');
+        let currentSceneIndex = 0;
+        const totalScenes = 15;
 
-        if (targetTab) targetTab.style.display = 'block';
-        if (targetBtn) targetBtn.classList.add('active-tab');
-      });
-    }
+        function updateHUDClock() {
+            const now = new Date();
+            document.getElementById('hudClock').innerText = now.toTimeString().split(' ')[0];
+        }
+        setInterval(updateHUDClock, 1000);
+        updateHUDClock();
 
-    // On Load Initialization
-    window.addEventListener('load', () => {
-      startLoadingSequence();
-    });
-  </script>
+        function showScene(index) {
+            playSound('click');
+            document.querySelectorAll('.scene').forEach(el => el.classList.add('hidden'));
+            
+            const target = document.getElementById(`scene-${index}`);
+            if (target) {
+                target.classList.remove('hidden');
+                currentSceneIndex = index;
+            }
+
+            // Update narrator status in HUD
+            const narratorStatus = document.getElementById('narratorStatus');
+            if (index === 0) narratorStatus.innerText = "BOOTING SYSTEM...";
+            else if (index === 1) narratorStatus.innerText = "SUBJECT CHALLENGE";
+            else if (index === 3) narratorStatus.innerText = "DISCLOSING IDENTITY";
+            else if (index === 4) narratorStatus.innerText = "EVALUATING PERSONALITY";
+            else if (index === 6) narratorStatus.innerText = "SCANNING FAMILY RECORDS";
+            else if (index === 7) narratorStatus.innerText = "DREAM TRACE";
+            else if (index === 12) narratorStatus.innerText = "TERMINAL DECRYPTOR";
+            else if (index === 14) narratorStatus.innerText = "INVESTIGATION COMPLETE";
+            else narratorStatus.innerText = "ANALYZING SUBJECT FILES";
+
+            if (index === 14) {
+                runFinalSequence();
+            }
+        }
+
+        function nextScene() {
+            if (currentSceneIndex < totalScenes - 1) {
+                showScene(currentSceneIndex + 1);
+            }
+        }
+
+        function prevScene() {
+            if (currentSceneIndex > 0) {
+                showScene(currentSceneIndex - 1);
+            }
+        }
+
+        function jumpToScene(index) {
+            toggleNavMenu();
+            showScene(index);
+        }
+
+        function toggleNavMenu() {
+            playSound('click');
+            const modal = document.getElementById('navModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Boot Loading Sequence (Scene 0)
+        window.onload = function() {
+            let percent = 0;
+            const percentEl = document.getElementById('bootPercent');
+            const circle = document.getElementById('progressCircle');
+            const circumference = 2 * Math.PI * 70; // 439.8
+
+            const interval = setInterval(() => {
+                percent += 2;
+                percentEl.innerText = `${percent}%`;
+
+                const offset = circumference - (percent / 100) * circumference;
+                circle.style.strokeDashoffset = offset;
+
+                if (percent === 12) document.getElementById('bootLog2').classList.remove('opacity-0');
+                if (percent === 32) document.getElementById('bootLog3').classList.remove('opacity-0');
+                if (percent === 88) document.getElementById('bootLog4').classList.remove('opacity-0');
+
+                if (percent >= 100) {
+                    clearInterval(interval);
+                    triggerBootGlitchTransition();
+                }
+            }, 40);
+        };
+
+        function triggerBootGlitchTransition() {
+            playSound('glitch');
+            const glitchOverlay = document.getElementById('glitchOverlay');
+            glitchOverlay.classList.remove('hidden');
+            document.body.classList.add('glitch-flash');
+
+            setTimeout(() => {
+                glitchOverlay.classList.add('hidden');
+                document.body.classList.remove('glitch-flash');
+                showScene(1); // Jump to "DO YOU KNOW, WHO I AM?!"
+            }, 800);
+        }
+
+        function startAccessSequence() {
+            showScene(2);
+            playSound('beep');
+
+            const bar = document.getElementById('accessBar');
+            bar.style.width = '100%';
+
+            setTimeout(() => {
+                document.getElementById('accessStatus').classList.remove('opacity-0');
+                document.getElementById('accessSub').classList.remove('opacity-0');
+                playSound('beep');
+            }, 1000);
+
+            setTimeout(() => {
+                showScene(3);
+                setTimeout(() => {
+                    document.getElementById('identityCard').classList.remove('opacity-0');
+                }, 300);
+            }, 2200);
+        }
+
+        function openMemoryModal(title, text, status) {
+            playSound('click');
+            document.getElementById('memTitle').innerText = `${title} // ${status}`;
+            document.getElementById('memBody').innerText = text;
+            document.getElementById('memoryModal').classList.remove('hidden');
+        }
+
+        function closeMemoryModal() {
+            playSound('click');
+            document.getElementById('memoryModal').classList.add('hidden');
+        }
+
+        function triggerCorruptedGlitch(fileId) {
+            playSound('glitch');
+            const overlay = document.getElementById('glitchOverlay');
+            document.getElementById('glitchOverlayText').innerText = `ERROR 0x4F2A: ${fileId} CORRUPTED / RESTRICTED`;
+            overlay.classList.remove('hidden');
+            
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 600);
+        }
+
+        function handleTerminalSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('terminalInput');
+            const cmd = input.value.trim().toLowerCase();
+            const output = document.getElementById('terminalOutput');
+
+            if (!cmd) return;
+
+            playSound('beep');
+
+            // Append user command line
+            const userLine = document.createElement('p');
+            userLine.className = 'text-white';
+            userLine.innerText = `CIPHER@UNKNOWN_NODE:~$ ${cmd}`;
+            output.appendChild(userLine);
+
+            // Command switch handling with strictly accurate details
+            const respLine = document.createElement('div');
+            respLine.className = 'text-cyber-green border-l border-cyber-green/40 pl-2 my-1';
+
+            if (cmd === 'help') {
+                respLine.innerText = "AVAILABLE COMMANDS: whoami, identity, skills, projects, socials, memory, clear";
+            } else if (cmd === 'whoami' || cmd === 'identity') {
+                respLine.innerText = "SEARCHING DATABASE...\nIDENTITY: FARHAN AHAMMED JANNAT\nCODENAME: CIPHER\nBIRTHDAY: 17 OCT 2008\nHOMETOWN: BIZULIA, SHAILAKUPA, JHENAIDAH, BANGLADESH";
+            } else if (cmd === 'skills') {
+                respLine.innerText = "SKILLS LOG:\n- VIDEO EDITING: Adobe Premiere Pro, CapCut, Filmora\n- PROGRAMMING: HTML5, CSS, C, Basic Python\n- DESIGN: Photoshop, Canva";
+            } else if (cmd === 'projects') {
+                respLine.innerText = "PROJECT FILES:\n1. PROJECT // CIPHER (Cyberpunk Site)\n2. Personal/Professional Web\n3. Love-Letter Website\n4. AI Experiments & Video Renders";
+            } else if (cmd === 'socials') {
+                respLine.innerText = "SOCIAL TRACES:\n- Instagram: __cipher__13\n- Facebook: farhan.aj.696421\n- GitHub: farhan886\n- X: a93274";
+            } else if (cmd === 'memory') {
+                respLine.innerText = "MEMORY ARCHIVE STATUS:\n- MEMORY_001: ACCESSIBLE\n- MEMORY_002: CORRUPTED\n- MEMORY_003: LOCKED";
+            } else if (cmd === 'clear') {
+                output.innerHTML = '';
+                input.value = '';
+                return;
+            } else {
+                respLine.className = 'text-cyber-red';
+                respLine.innerText = `COMMAND NOT RECOGNIZED: '${cmd}'. Type 'help' for options.`;
+            }
+
+            output.appendChild(respLine);
+            input.value = '';
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function runFinalSequence() {
+            const delays = [600, 1600, 2600, 3800, 5000, 6500];
+
+            setTimeout(() => { document.getElementById('finalLine1').classList.remove('opacity-0'); playSound('beep'); }, delays[0]);
+            setTimeout(() => { document.getElementById('finalLine2').classList.remove('opacity-0'); playSound('beep'); }, delays[1]);
+            setTimeout(() => { document.getElementById('finalLine3').classList.remove('opacity-0'); playSound('beep'); }, delays[2]);
+            setTimeout(() => { document.getElementById('finalLine4').classList.remove('opacity-0'); playSound('glitch'); }, delays[3]);
+            setTimeout(() => { document.getElementById('finalLine5').classList.remove('opacity-0'); playSound('beep'); }, delays[4]);
+            setTimeout(() => { document.getElementById('finalLine6').classList.remove('opacity-0'); playSound('beep'); }, delays[5]);
+
+            // Final connection termination fade
+            setTimeout(() => {
+                document.getElementById('terminatedMsg').classList.remove('hidden');
+                document.querySelector('header').style.opacity = '0.3';
+                document.querySelector('footer').style.opacity = '0.3';
+            }, 8000);
+        }
+    </script>
 </body>
 </html>
-```
